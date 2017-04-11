@@ -801,6 +801,7 @@ public:
     void ScheduleAutosave();
 
     static void MenuHelp(Command id);
+    static void MenuDebug(Command id);
 
     void Clear();
 

@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------------
 #include "solvespace.h"
 #include "config.h"
+#include <regex>
 
 SolveSpaceUI SolveSpace::SS = {};
 Sketch SolveSpace::SK = {};
@@ -1030,6 +1031,34 @@ void SolveSpaceUI::ShowNakedEdges(bool reportOnlyWhenNotOkay) {
     } else {
         Error(_("%s\n\n%s\n\n%d problematic edges, bad.%s"),
             intersMsg, leaksMsg, SS.nakedEdges.l.n, cntMsg.c_str());
+    }
+}
+
+void SolveSpaceUI::MenuDebug(Command id) {
+    switch(id) {
+        case Command::FOLDED_EQUATIONS:
+        case Command::EQUATIONS: {
+            SS.WriteEqSystemForGroup(SS.GW.activeGroup);
+            Group *g = SK.GetGroup(SS.GW.activeGroup);
+            SS.sys.WriteEquationsExceptFor(Constraint::NO_CONSTRAINT, g);
+            //std::string result = "https://latex.codecogs.com/gif.latex?";
+            //std::string result = "http://www.sciweavers.org/tex2img.php?eq=";
+            //std::string result = "http://www.texrendr.com/?eqn=";
+            std::string result = "http://www.HostMath.com/Show.aspx?Code=";
+
+            for(const Equation &eq : SS.sys.eq) {
+                Expr *expr = eq.e;
+                if(id == Command::FOLDED_EQUATIONS) expr = expr->FoldConstants();
+                result += expr->PrintLaTeX() + "\\\\ ";
+            }
+            //result += "&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0"; // sciweavers
+
+            result = std::regex_replace(result, std::regex("[+]"), "%2B");
+            Platform::OpenInBrowser(result.c_str());
+            SS.sys.Clear();
+            break;
+        }
+        default:;
     }
 }
 

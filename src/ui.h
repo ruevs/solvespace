@@ -174,6 +174,9 @@ enum class Command : uint32_t {
     WEBSITE,
     GITHUB,
     ABOUT,
+    // Debug
+    EQUATIONS,
+    FOLDED_EQUATIONS,
 };
 
 class Button;

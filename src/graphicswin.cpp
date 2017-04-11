@@ -26,6 +26,7 @@ struct MenuEntry {
 #define mGrp  (&Group::MenuGroup)
 #define mAna  (&SolveSpaceUI::MenuAnalyze)
 #define mHelp (&SolveSpaceUI::MenuHelp)
+#define mDbg  (&SolveSpaceUI::MenuDebug)
 #define SHIFT_MASK 0x100
 #define CTRL_MASK  0x200
 #define FN_MASK    0x400
@@ -186,6 +187,11 @@ const MenuEntry Menu[] = {
 { 1, N_("&Go to GitHub commit"),        Command::GITHUB,            0,       KN, mHelp  },
 #ifndef __APPLE__
 { 1, N_("&About"),                      Command::ABOUT,            0,       KN, mHelp  },
+#endif
+#ifdef _DEBUG
+{ 0, N_("&Debug"),                      Command::NONE,             0,       KN, NULL  },
+{ 1, N_("&Equations"),                  Command::EQUATIONS,        0,       KN, mDbg  },
+{ 1, N_("&Folded Equations"),           Command::FOLDED_EQUATIONS, 0,       KN, mDbg  },
 #endif
 { -1, 0,                                Command::NONE,             0,       KN, NULL   }
 };

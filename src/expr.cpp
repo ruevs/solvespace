@@ -297,6 +297,10 @@ int Expr::Nodes() const {
     }
 }
 
+bool Expr::IsAdditiveOp() const {
+    return op == Op::PLUS || op == Op::MINUS;
+}
+
 Expr *Expr::DeepCopy() const {
     Expr *n = AllocExpr();
     *n = *this;
@@ -587,6 +591,55 @@ p:
     ssassert(false, "Unexpected operation");
 }
 
+std::string Expr::PrintLaTeX() const {
+    std::string result;
+    switch(op) {
+        case Op::PARAM:     return ssprintf("p%08x", parh.v);
+        case Op::PARAM_PTR: return ssprintf("p%08x", parp->h.v);
+
+        case Op::CONSTANT:  return ssprintf("%g", v);
+        case Op::PLUS:      return a->PrintLaTeX() + " + " + b->PrintLaTeX();
+        case Op::MINUS:
+            result = a->PrintLaTeX();
+            result += "-";
+            if(b->IsAdditiveOp()) result += "\\left(";
+            result += b->PrintLaTeX();
+            if(b->IsAdditiveOp()) result += "\\right)";
+            return result;
+
+        case Op::TIMES:
+            if(a->IsAdditiveOp()) result += "\\left(";
+            result += a->PrintLaTeX();
+            if(a->IsAdditiveOp()) result += "\\right)";
+            result += "\\cdot ";
+            if(b->IsAdditiveOp()) result += "\\left(";
+            result += b->PrintLaTeX();
+            if(b->IsAdditiveOp()) result += "\\right)";
+            return result;
+
+        case Op::DIV: return "\\frac{" + a->PrintLaTeX() + "}{" + b->PrintLaTeX() + "}";
+        case Op::SQUARE:
+            if(a->Children() > 0) result += "\\left(";
+            result += a->PrintLaTeX();
+            if(a->Children() > 0) result += "\\right)";
+            return result + "^{2}";
+
+        case Op::SQRT:   return "\\sqrt{" + a->PrintLaTeX() + "}";
+        case Op::NEGATE:
+            result = "-";
+            if(a->IsAdditiveOp()) result += "\\left(";
+            result += a->PrintLaTeX();
+            if(a->IsAdditiveOp()) result += "\\right)";
+            return result;
+
+        case Op::SIN:  return "sin\\left(" + a->PrintLaTeX() + "\\right)";
+        case Op::COS:  return "cos\\left(" + a->PrintLaTeX() + "\\right)";
+        case Op::ASIN: return "asin\\left(" + a->PrintLaTeX() + "\\right)";
+        case Op::ACOS: return "acos\\left(" + a->PrintLaTeX() + "\\right)";
+        default:;
+    }
+    ssassert(false, "Unexpected operation");
+}
 
 //-----------------------------------------------------------------------------
 // A parser; convert a string to an expression. Infix notation, with the

@@ -83,11 +83,13 @@ public:
     void ParamsToPointers();
 
     std::string Print() const;
+    std::string PrintLaTeX() const;
 
     // number of child nodes: 0 (e.g. constant), 1 (sqrt), or 2 (+)
     int Children() const;
     // total number of nodes in the tree
     int Nodes() const;
+    bool IsAdditiveOp() const;
 
     // Make a simple copy
     Expr *DeepCopy() const;
