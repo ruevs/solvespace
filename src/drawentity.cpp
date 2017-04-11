@@ -587,6 +587,45 @@ void Entity::Draw(DrawAs how, Canvas *canvas) {
                 canvas->DrawPoint(p, hcsAnalyze);
             }
 
+
+            if(SS.sys.solveWay.size() > 0 && SS.sys.solveWay[0].FindByIdNoOops(param[0]) != NULL) {
+                Canvas::Stroke analyzeStroke = Style::Stroke(Style::ANALYZE);
+                analyzeStroke.width = 1.0;
+                analyzeStroke.layer = Canvas::Layer::FRONT;
+                if(how != DrawAs::DEFAULT) analyzeStroke.color = pointStroke.color;
+                Canvas::hStroke hcsAnalyze = canvas->GetStroke(analyzeStroke);
+
+                Param *px = SK.GetParam(param[0]);
+                Param *py = SK.GetParam(param[1]);
+                Param *pz = (param[2].v != 0) ? SK.GetParam(param[2]) : NULL;
+
+                double oldX = px->val;
+                double oldY = py->val;
+                double oldZ = (pz != NULL) ? pz->val : 0.0;
+
+                bool first = true;
+                Vector prev;
+                for(auto &w : SS.sys.solveWay) {
+                    System::ParamValue *wpx = w.FindByIdNoOops(param[0]);
+                    System::ParamValue *wpy = w.FindByIdNoOops(param[1]);
+                    System::ParamValue *wpz = w.FindByIdNoOops(param[2]);
+                    if(wpx == NULL || wpy == NULL) continue;
+                    px->val = wpx->val;
+                    py->val = wpy->val;
+                    if(wpz != NULL) pz->val = wpz->val;
+                    Vector cur = PointGetNum();
+                    if(!first) {
+                        canvas->DrawLine(prev, cur, hcsAnalyze);
+                    } else {
+                        first = false;
+                    }
+                    prev = cur;
+                }
+                px->val = oldX;
+                py->val = oldY;
+                if(pz != NULL) pz->val = oldZ;
+            }
+
             canvas->DrawPoint(p, hcsPoint);
             return;
         }

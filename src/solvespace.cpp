@@ -1058,6 +1058,13 @@ void SolveSpaceUI::MenuDebug(Command id) {
             SS.sys.Clear();
             break;
         }
+        case Command::SOLVE_WAY:
+            SS.sys.recordSolveWay = !SS.sys.recordSolveWay;
+            SS.sys.ClearSolveWay();
+            SS.GW.persistentDirty = true;
+            SS.GW.EnsureValidActives();
+            SS.GW.Invalidate();
+            break;
         default:;
     }
 }
@@ -1117,6 +1124,7 @@ void SolveSpaceUI::Clear() {
     GW.in3dMenuItem = NULL;
     GW.undoMenuItem = NULL;
     GW.redoMenuItem = NULL;
+    GW.solveWayMenuItem = NULL;
     GW.window = NULL;
 }
 

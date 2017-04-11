@@ -260,6 +260,15 @@ public:
         } B;
     } mat;
 
+    struct ParamValue {
+        double val;
+        hParam h;
+        void Clear() { }
+    };
+
+    std::vector<IdList<ParamValue, hParam>> solveWay;
+    bool recordSolveWay;
+
     static const double CONVERGE_TOLERANCE;
     int CalculateRank();
     bool TestRank(int *dof = NULL);
@@ -294,6 +303,8 @@ public:
     Param *GetLastParamSubstitution(Param *p);
     void SubstituteParamsByLast(Expr *e);
     void SortSubstitutionByDragged(Param *p);
+    void AddSolveWayPoint();
+    void ClearSolveWay();
 };
 
 #include "ttf.h"

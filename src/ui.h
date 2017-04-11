@@ -177,6 +177,7 @@ enum class Command : uint32_t {
     // Debug
     EQUATIONS,
     FOLDED_EQUATIONS,
+    SOLVE_WAY,
 };
 
 class Button;
@@ -563,6 +564,8 @@ public:
 
     Platform::MenuItemRef undoMenuItem;
     Platform::MenuItemRef redoMenuItem;
+
+    Platform::MenuItemRef solveWayMenuItem;
 
     std::shared_ptr<ViewportCanvas> canvas;
     std::shared_ptr<BatchCanvas>    persistentCanvas;

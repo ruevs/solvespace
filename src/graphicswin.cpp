@@ -192,6 +192,7 @@ const MenuEntry Menu[] = {
 { 0, N_("&Debug"),                      Command::NONE,             0,       KN, NULL  },
 { 1, N_("&Equations"),                  Command::EQUATIONS,        0,       KN, mDbg  },
 { 1, N_("&Folded Equations"),           Command::FOLDED_EQUATIONS, 0,       KN, mDbg  },
+{ 1, N_("&Display Solve Way"),          Command::SOLVE_WAY,        0,       KC, mDbg  },
 #endif
 { -1, 0,                                Command::NONE,             0,       KN, NULL   }
 };
@@ -350,6 +351,8 @@ void GraphicsWindow::PopulateMainMenu() {
                 undoMenuItem = menuItem;
             } else if(Menu[i].cmd == Command::REDO) {
                 redoMenuItem = menuItem;
+            } else if(Menu[i].cmd == Command::SOLVE_WAY) {
+                solveWayMenuItem = menuItem;
             }
         }
     }
@@ -1001,6 +1004,7 @@ void GraphicsWindow::EnsureValidActives() {
     explodeMenuItem->SetActive(SS.explode);
     showToolbarMenuItem->SetActive(SS.showToolbar);
     fullScreenMenuItem->SetActive(SS.GW.window->IsFullScreen());
+    solveWayMenuItem->SetActive(SS.sys.recordSolveWay);
 
     if(change) SS.ScheduleShowTW();
 }

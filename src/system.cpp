@@ -285,6 +285,26 @@ bool System::SolveLeastSquares() {
     return true;
 }
 
+void System::ClearSolveWay() {
+    for(auto &w : solveWay) {
+        w.Clear();
+    }
+    solveWay.clear();
+}
+
+void System::AddSolveWayPoint() {
+    if(!recordSolveWay) return;
+    solveWay.emplace_back(IdList<ParamValue, hParam>{});
+    IdList<ParamValue, hParam> &w = solveWay.back();
+    for(int i = 0; i < mat.n; i++) {
+        Param *p = param.FindById(mat.param[i]);
+        ParamValue v;
+        v.h = p->h;
+        v.val = p->val;
+        w.Add(&v);
+    }
+}
+
 bool System::NewtonSolve(int tag) {
 
     int iter = 0;
@@ -296,6 +316,8 @@ bool System::NewtonSolve(int tag) {
     for(i = 0; i < mat.m; i++) {
         mat.B.num[i] = (mat.B.sym[i])->Eval();
     }
+    ClearSolveWay();
+    AddSolveWayPoint();
     do {
         // And evaluate the Jacobian at our initial operating point.
         EvalJacobian();
@@ -312,6 +334,7 @@ bool System::NewtonSolve(int tag) {
                 return false;
             }
         }
+        AddSolveWayPoint();
 
         // Re-evalute the functions, since the params have just changed.
         for(i = 0; i < mat.m; i++) {
