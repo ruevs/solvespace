@@ -260,7 +260,7 @@ public:
     enum class CombineAs : uint32_t {
         UNION      = 10,
         DIFFERENCE = 11,
-        INTERSECT  = 12
+        INTERSECTION  = 12
     };
 
     int             tag;

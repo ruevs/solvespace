@@ -17,7 +17,12 @@ void SShell::MakeFromDifferenceOf(SShell *a, SShell *b) {
 }
 
 void SShell::MakeFromIntersectionOf(SShell *a, SShell *b) {
-    MakeFromBoolean(a, b, SSurface::CombineAs::INTERSECT);
+    MakeFromBoolean(a, b, SSurface::CombineAs::INTERSECTION);
+/*    // this works but is not optimal
+    SShell c = {};
+    c.MakeFromBoolean(a, b, SSurface::CombineAs::DIFFERENCE);
+    MakeFromBoolean(a, &c, SSurface::CombineAs::DIFFERENCE);
+    c.Clear(); */
 }
 
 //-----------------------------------------------------------------------------
@@ -197,35 +202,32 @@ void SSurface::TrimFromEdgeList(SEdgeList *el, bool asUv) {
 static bool KeepRegion(SSurface::CombineAs type, bool opA, SShell::Class shell, SShell::Class orig)
 {
     bool inShell = (shell == SShell::Class::INSIDE),
+         outSide = (shell == SShell::Class::OUTSIDE),
          inSame  = (shell == SShell::Class::COINC_SAME),
-         inOpp   = (shell == SShell::Class::COINC_OPP),
+//         inOpp   = (shell == SShell::Class::COINC_OPP),
          inOrig  = (orig == SShell::Class::INSIDE);
 
-    bool inFace = inSame || inOpp;
-
-    // If these are correct, then they should be independent of inShell
-    // if inFace is true.
     if(!inOrig) return false;
     switch(type) {
         case SSurface::CombineAs::UNION:
             if(opA) {
-                return (!inShell && !inFace);
+                return outSide;
             } else {
-                return (!inShell && !inFace) || inSame;
+                return outSide || inSame;
             }
 
         case SSurface::CombineAs::DIFFERENCE:
             if(opA) {
-                return (!inShell && !inFace);
+                return outSide;
             } else {
-                return (inShell && !inFace) || inSame;
+                return inShell || inSame;
             }
 
-        case SSurface::CombineAs::INTERSECT:
+        case SSurface::CombineAs::INTERSECTION:
             if(opA) {
-                return (!inShell && inFace);
+                return inShell;
             } else {
-                return (!inShell && inFace) || inSame;
+                return inShell || inSame;   // "|| inSame" does not seem to make any difference?!
             }
 
         default: ssassert(false, "Unexpected combine type");
@@ -237,6 +239,11 @@ static bool KeepEdge(SSurface::CombineAs type, bool opA,
 {
     bool keepIn  = KeepRegion(type, opA, indir_shell,  indir_orig),
          keepOut = KeepRegion(type, opA, outdir_shell, outdir_orig);
+
+    // ruevs20190912: The comment below is wrong?
+    // Because outdir_orig == SShell::Class::OUTSIDE and KeepRegion checks
+    //    if(!inOrig) return false;
+    // therefore keepOut is always false! The second call to KeepRegion above could be removed entirely?!
 
     // If the regions to the left and right of this edge are both in or both
     // out, then this edge is not useful and should be discarded.
