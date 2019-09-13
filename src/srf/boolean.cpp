@@ -237,13 +237,20 @@ static bool KeepEdge(SSurface::CombineAs type, bool opA,
                      SShell::Class indir_shell, SShell::Class outdir_shell,
                      SShell::Class indir_orig, SShell::Class outdir_orig)
 {
+/*
+    INSIDE     = 100,
+    OUTSIDE    = 200,
+    COINC_SAME = 300,
+    COINC_OPP  = 400
+*/
+
+    if (SSurface::CombineAs::INTERSECTION == type) {
+        uint32_t cc = (uint32_t)indir_shell*10 + (uint32_t)outdir_shell + (uint32_t)indir_orig/10 + (uint32_t)outdir_orig/100;
+        return (1112 == cc) || (2111 == cc);
+    }
+
     bool keepIn  = KeepRegion(type, opA, indir_shell,  indir_orig),
          keepOut = KeepRegion(type, opA, outdir_shell, outdir_orig);
-
-    // ruevs20190912: The comment below is wrong?
-    // Because outdir_orig == SShell::Class::OUTSIDE and KeepRegion checks
-    //    if(!inOrig) return false;
-    // therefore keepOut is always false! The second call to KeepRegion above could be removed entirely?!
 
     // If the regions to the left and right of this edge are both in or both
     // out, then this edge is not useful and should be discarded.
