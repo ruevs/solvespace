@@ -287,11 +287,19 @@ void SMesh::MakeFromDifferenceOf(SMesh *a, SMesh *b) {
 }
 
 void SMesh::MakeFromIntersectionOf(SMesh *a, SMesh *b) {
-    SBsp3 *bspa = SBsp3::FromMesh(a);
+	SMesh c = {};
+
+	c.MakeFromDifferenceOf(a, b);
+	MakeFromDifferenceOf(a, &c);
+
+	c.Clear();
+
+/*  SBsp3 *bspa = SBsp3::FromMesh(a);
     SBsp3 *bspb = SBsp3::FromMesh(b);
 
     AddAgainstBsp(a, bspb);
     AddAgainstBsp(b, bspa);
+*/
 }
 
 void SMesh::MakeFromCopyOf(SMesh *a) {

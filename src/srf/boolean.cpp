@@ -246,7 +246,7 @@ static bool KeepEdge(SSurface::CombineAs type, bool opA,
 
     if (SSurface::CombineAs::INTERSECTION == type) {
         uint32_t cc = (uint32_t)indir_shell*10 + (uint32_t)outdir_shell + (uint32_t)indir_orig/10 + (uint32_t)outdir_orig/100;
-        return (1112 == cc) || (2111 == cc);
+        return (1112 == cc) || (2111 == cc) || ((3112==cc)) || ((2311==cc));
     }
 
     bool keepIn  = KeepRegion(type, opA, indir_shell,  indir_orig),
