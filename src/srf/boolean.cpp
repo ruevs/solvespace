@@ -7,6 +7,9 @@
 #include "solvespace.h"
 
 static int I;
+#ifndef NDEBUG
+    static uint32_t origKept = 0, interKept = 0;
+#endif
 
 void SShell::MakeFromUnionOf(SShell *a, SShell *b) {
     MakeFromBoolean(a, b, SSurface::CombineAs::UNION);
@@ -246,7 +249,31 @@ static bool KeepEdge(SSurface::CombineAs type, bool opA,
 
     if (SSurface::CombineAs::INTERSECTION == type) {
         uint32_t cc = (uint32_t)indir_shell*10 + (uint32_t)outdir_shell + (uint32_t)indir_orig/10 + (uint32_t)outdir_orig/100;
-        return (1112 == cc) || (2111 == cc) || ((3112==cc)) || ((2311==cc));
+        bool result = (1112 == cc) ||    // Internal
+                      (2111 == cc) ||    // X intersections
+                      (1212 == cc) ||    // Face on face same normal
+                      (4111 == cc) ||    // X with one side face on face opposite normals 
+                      ( (!opA) &&        // Edges which should be kept only from one shell
+                        ( (3312 == cc) || (2311 == cc) ||   // Face on face same normal
+                          (2321 == cc)                      // Edge on edge
+                        )
+                      );
+/*
+     2121 is the same as 1212 keep only one
+     3212 is the same as 2321 keep only one
+     ((3112 == cc) || (3132 == cc) || (2313 == cc) )   // No
+     2312 3312 4212 2421 // Face on Face opposite normals, coplanar opposite do NOT include
+     2411 2112 4412 // Face on Face opposite normals, concave opposite do NOT include
+*/
+
+// Test values here
+//    result = (2311 == cc);
+//    result = result && !opA;
+
+#ifndef NDEBUG
+        dbp("I: %d opA: %d  cc: %d %d", I, opA, cc, result);
+#endif
+        return result;
     }
 
     bool keepIn  = KeepRegion(type, opA, indir_shell,  indir_orig),
@@ -558,6 +585,9 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
         if(KeepEdge(type, opA, indir_shell, outdir_shell,
                                indir_orig,  outdir_orig))
         {
+#ifndef NDEBUG
+            origKept++;
+#endif
             for(se = chain.l.First(); se; se = chain.l.NextAfter(se)) {
                 final.AddEdge(se->a, se->b, se->auxA, se->auxB);
             }
@@ -591,6 +621,9 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
         if(KeepEdge(type, opA, indir_shell, outdir_shell,
                                indir_orig,  outdir_orig))
         {
+#ifndef NDEBUG
+            interKept++;
+#endif
             for(se = chain.l.First(); se; se = chain.l.NextAfter(se)) {
                 final.AddEdge(se->a, se->b, se->auxA, se->auxB);
             }
@@ -598,11 +631,19 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
         chain.Clear();
     }
 
+#ifndef NDEBUG
+    dbp("type: %d origKept: %d interKept %d", type, origKept, interKept);
+#endif
+
     // Cull extraneous edges; duplicates or anti-parallel pairs. In particular,
     // we can get duplicate edges if our surface intersects the other shell
     // at an edge, so that both surfaces intersect coincident (and both
     // generate an intersection edge).
     final.CullExtraneousEdges();
+
+#ifndef NDEBUG
+    dbp("Total %d, left after culling: %d", origKept + interKept, final.l.n);
+#endif
 
     // Use our reassembled edges to trim the new surface.
     ret.TrimFromEdgeList(&final, /*asUv=*/true);
@@ -737,7 +778,7 @@ void SShell::MakeFromBoolean(SShell *a, SShell *b, SSurface::CombineAs type) {
     SCurve *sc;
     for(sc = curve.First(); sc; sc = curve.NextAfter(sc)) {
         SSurface *srfA = sc->GetSurfaceA(a, b),
-                       *srfB = sc->GetSurfaceB(a, b);
+                 *srfB = sc->GetSurfaceB(a, b);
 
         sc->RemoveShortSegments(srfA, srfB);
     }
@@ -752,8 +793,16 @@ void SShell::MakeFromBoolean(SShell *a, SShell *b, SSurface::CombineAs type) {
 
     if(b->surface.IsEmpty() || a->surface.IsEmpty()) {
         I = 1000000;
+#ifndef NDEBUG
+        origKept  = 1000000;
+        interKept = 1000000;
+#endif
     } else {
         I = 0;
+#ifndef NDEBUG
+        origKept = 0;
+        interKept = 0;
+#endif
     }
     // Then trim and copy the surfaces
     a->CopySurfacesTrimAgainst(a, b, this, type);
