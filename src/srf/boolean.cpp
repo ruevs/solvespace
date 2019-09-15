@@ -650,7 +650,7 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
 
     SPolygon poly = {};
     final.l.ClearTags();
-    if(!final.AssemblePolygon(&poly, NULL, /*keepDir=*/true)) {
+    if(!final.AssemblePolygon(&poly, NULL, /*keepDir=*/false)) {    // ruevs: passing false is a hack according to jwesthues https://github.com/solvespace/solvespace/issues/35#issuecomment-531173543
         into->booleanFailed = true;
         dbp("failed: I=%d, avoid=%d", I, choosing.l.n);
         DEBUGEDGELIST(&final, &ret);
