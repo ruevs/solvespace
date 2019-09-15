@@ -1662,6 +1662,17 @@ void InitGui(int argc, char **argv) {
     if(!SetLocale((uint16_t)GetUserDefaultLCID())) {
         SetLocale("en_US");
     }
+
+#ifndef NDEBUG
+    // create a debug console
+    if(AllocConsole()) {
+        FILE *pCout;
+        freopen_s(&pCout, "CONOUT$", "w", /*stdout*/stderr);
+        SetConsoleTitle(L"Debug Console");
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+                                FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+    }
+#endif
 }
 
 void RunGui() {
