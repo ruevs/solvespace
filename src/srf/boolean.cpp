@@ -246,38 +246,80 @@ static bool KeepEdge(SSurface::CombineAs type, bool opA,
     COINC_SAME = 300,
     COINC_OPP  = 400
 */
-
-    if (SSurface::CombineAs::INTERSECTION == type) {
-        uint32_t cc = (uint32_t)indir_shell*10 + (uint32_t)outdir_shell + (uint32_t)indir_orig/10 + (uint32_t)outdir_orig/100;
-        bool result = (1112 == cc) ||    // Internal
-                      (2111 == cc) ||    // X intersections
-                      (1212 == cc) ||    // Face on face same normal
-                      (4111 == cc) ||    // X with one side face on face opposite normals 
-                      ( (!opA) &&        // Edges which should be kept only from one shell
-                        ( (3312 == cc) || (2311 == cc) ||   // Face on face same normal
-                          (2321 == cc)                      // Edge on edge
-                        )
-                      );
-/*
-     2121 is the same as 1212 keep only one
-     3212 is the same as 2321 keep only one
-     ((3112 == cc) || (3132 == cc) || (2313 == cc) )   // No
-     2312 3312 4212 2421 // Face on Face opposite normals, coplanar opposite do NOT include
-     2411 2112 4412 // Face on Face opposite normals, concave opposite do NOT include
-*/
-
-// Test values here
-//    result = (2311 == cc);
-//    result = result && !opA;
-
-#ifndef NDEBUG
-        dbp("I: %d opA: %d  cc: %d %d", I, opA, cc, result);
-#endif
-        return result;
-    }
+    uint32_t cc = (uint32_t)indir_shell*10 + (uint32_t)outdir_shell + (uint32_t)indir_orig/10 + (uint32_t)outdir_orig/100;
+    bool result;
+    bool resultsmart;
 
     bool keepIn  = KeepRegion(type, opA, indir_shell,  indir_orig),
          keepOut = KeepRegion(type, opA, outdir_shell, outdir_orig);
+
+    result = (keepIn && !keepOut);
+
+    switch (type) {
+        case SSurface::CombineAs::UNION:
+            resultsmart = ((SShell::Class::INSIDE==indir_orig) && (
+                              (SShell::Class::OUTSIDE==indir_shell) ||
+                              ((!opA) && (
+                                 (SShell::Class::COINC_SAME==indir_shell)
+                               )
+                          ))) &&
+                          (!((SShell::Class::INSIDE==outdir_orig) && (
+                              (SShell::Class::OUTSIDE==outdir_shell) ||
+                              ((!opA) && (
+                                 (SShell::Class::COINC_SAME==outdir_shell)
+                               )
+                          ))));
+            break;
+
+        case SSurface::CombineAs::DIFFERENCE:
+            resultsmart = (SShell::Class::OUTSIDE==indir_shell) ||                                                                                  // 1112 1212
+                          ((!opA) && (
+                             (SShell::Class::INSIDE==indir_shell) ||
+                             (SShell::Class::COINC_SAME==indir_shell)
+                           )
+                          );
+            break;
+
+        case SSurface::CombineAs::INTERSECTION:
+            // "Stupid" decision derived by a lot of debugging
+            result = (1112 == cc) ||    // Internal
+                     (2111 == cc) ||    // X intersections
+                     (1212 == cc) ||    // Face on face same normal
+                     (4111 == cc) ||    // X with one side face on face opposite normals 
+                     ( (!opA) &&        // Edges which should be kept only from one shell
+                       ( (3312 == cc) || (2311 == cc) ||   // Face on face same normal
+                         (2321 == cc)                      // Edge on edge
+                       )
+                     );
+
+            // "Smart" decision derived from the above with a Karnaugh map
+            resultsmart = (SShell::Class::INSIDE==indir_shell) ||                                                                                  // 1112 1212
+                          ((SShell::Class::INSIDE==outdir_shell)&&(SShell::Class::INSIDE==indir_orig)&&(SShell::Class::INSIDE==outdir_orig)) ||   // 2111 4111
+                          ((!opA) && (
+                             ((SShell::Class::COINC_SAME==indir_shell)&&(SShell::Class::COINC_SAME==outdir_shell))||                             // 3312
+                             ((SShell::Class::COINC_SAME==outdir_shell)&&(SShell::Class::INSIDE==outdir_orig))                                   // 2311 2321
+                           )
+                          );
+    /*
+         2121 is the same as 1212 keep only one
+         3212 is the same as 2321 keep only one
+         ((3112 == cc) || (3132 == cc) || (2313 == cc) )   // No
+         2312 3312 4212 2421 // Face on Face opposite normals, coplanar opposite do NOT include
+         2411 2112 4412 // Face on Face opposite normals, concave opposite do NOT include
+    */
+            break;
+
+        default: ssassert(false, "Unexpected combine type");
+    }
+
+// Test values here
+//    result = (2321 == cc);
+//    result = result && !opA;
+
+#ifndef NDEBUG
+    dbp("I: %d opA: %d  cc: %d %d %s", I, opA, cc, result, (result!=resultsmart)?"NOOOOOOOOOOOOOOOOOO":"");
+#endif
+    return result;
 
     // If the regions to the left and right of this edge are both in or both
     // out, then this edge is not useful and should be discarded.
