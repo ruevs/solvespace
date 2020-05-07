@@ -128,7 +128,6 @@ elseif(APPLE)
         -fobjc-arc)
 
     list(APPEND platform_SOURCES
-        render/rendergl.cpp
         platform/guimac.mm)
 else()
     list(APPEND platform_SOURCES
@@ -341,7 +340,7 @@ if(ENABLE_GUI)
 
     if(MSVC)
         set_target_properties(solvespace PROPERTIES
-            LINK_FLAGS "/MANIFEST:NO /SAFESEH:NO /INCREMENTAL:NO /OPT:REF /STACK:33554432")
+            LINK_FLAGS "/MANIFEST:NO /SAFESEH:NO /INCREMENTAL:NO /OPT:REF")
     elseif(APPLE)
         set_target_properties(solvespace PROPERTIES
             OUTPUT_NAME SolveSpace)

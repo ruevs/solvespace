@@ -120,7 +120,7 @@ public:
     Vector ScaledBy(double s) const;
     Vector ProjectInto(hEntity wrkpl) const;
     Vector ProjectVectorInto(hEntity wrkpl) const;
-    double DivPivoting(Vector delta) const;
+    double DivProjected(Vector delta) const;
     Vector ClosestOrtho() const;
     void MakeMaxMin(Vector *maxv, Vector *minv) const;
     Vector ClampWithin(double minv, double maxv) const;
@@ -187,7 +187,7 @@ public:
     Point2d Plus(const Point2d &b) const;
     Point2d Minus(const Point2d &b) const;
     Point2d ScaledBy(double s) const;
-    double DivPivoting(Point2d delta) const;
+    double DivProjected(Point2d delta) const;
     double Dot(Point2d p) const;
     double DistanceTo(const Point2d &p) const;
     double DistanceToLine(const Point2d &p0, const Point2d &dp, bool asSegment) const;
@@ -479,11 +479,6 @@ public:
     const T *end() const { return IsEmpty() ? nullptr : &elem[0] + n; }
     const T *cbegin() const { return begin(); }
     const T *cend() const { return end(); }
-
-    template<typename F>
-    size_t CountIf(F &&predicate) const {
-        return std::count_if(begin(), end(), std::forward<F&&>(predicate));
-    }
 
     void ClearTags() {
         for(auto &elt : *this) { elt.tag = 0; }

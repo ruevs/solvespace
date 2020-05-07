@@ -138,9 +138,11 @@ static void MessageBox(const char *fmt, va_list va, bool error,
         }
     }
 
-    std::string::iterator it = description.begin();
-    while(isspace(*it)) it++;
-    description = description.substr(it - description.begin());
+    if(description.length() > 0) {
+        std::string::iterator it = description.begin();
+        while(isspace(*it)) it++;
+        description = description.substr(it - description.begin());
+    }
 
     Platform::MessageDialogRef dialog = CreateMessageDialog(SS.GW.window);
     if (!dialog) {
@@ -607,7 +609,7 @@ bool Vector::OnLineSegment(Vector a, Vector b, double tol) const {
 
     if(distsq >= tol*tol) return false;
 
-    double t = (this->Minus(a)).DivPivoting(d);
+    double t = (this->Minus(a)).DivProjected(d);
     // On-endpoint already tested
     if(t < 0 || t > 1) return false;
     return true;
@@ -696,16 +698,9 @@ Vector4 Vector::Project4d() const {
     return Vector4::From(1, x, y, z);
 }
 
-double Vector::DivPivoting(Vector delta) const {
-    double mx = fabs(delta.x), my = fabs(delta.y), mz = fabs(delta.z);
-
-    if(mx > my && mx > mz) {
-        return x/delta.x;
-    } else if(my > mz) {
-        return y/delta.y;
-    } else {
-        return z/delta.z;
-    }
+double Vector::DivProjected(Vector delta) const {
+    return (x*delta.x + y*delta.y + z*delta.z)
+         / (delta.x*delta.x + delta.y*delta.y + delta.z*delta.z);
 }
 
 Vector Vector::ClosestOrtho() const {
@@ -995,12 +990,8 @@ Point2d Point2d::ScaledBy(double s) const {
     return { x * s, y * s };
 }
 
-double Point2d::DivPivoting(Point2d delta) const {
-    if(fabs(delta.x) > fabs(delta.y)) {
-        return x/delta.x;
-    } else {
-        return y/delta.y;
-    }
+double Point2d::DivProjected(Point2d delta) const {
+    return (x*delta.x + y*delta.y) / (delta.x*delta.x + delta.y*delta.y);
 }
 
 double Point2d::MagSquared() const {

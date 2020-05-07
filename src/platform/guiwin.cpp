@@ -73,9 +73,9 @@ namespace Platform {
 void CheckLastError(const char *file, int line, const char *function, const char *expr) {
     if(GetLastError() != S_OK) {
         LPWSTR messageW;
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM,
-                      NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                      (LPWSTR)&messageW, 0, NULL);
+        FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM,
+                       NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                       (LPWSTR)&messageW, 0, NULL);
 
         std::string message;
         message += ssprintf("File %s, line %u, function %s:\n", file, line, function);
@@ -152,13 +152,12 @@ static int Clamp(int x, int a, int b) {
 
 bool handlingFatalError = false;
 
-void FatalError(std::string message) {
+void FatalError(const std::string &message) {
     // Indicate that we're handling a fatal error, to avoid re-entering application code
     // and potentially crashing even harder.
     handlingFatalError = true;
 
-    message += "\nGenerate debug report?";
-    switch(MessageBoxW(NULL, Platform::Widen(message).c_str(),
+    switch(MessageBoxW(NULL, Platform::Widen(message + "\nGenerate debug report?").c_str(),
                        L"Fatal error — SolveSpace",
                        MB_ICONERROR|MB_TASKMODAL|MB_SETFOREGROUND|MB_TOPMOST|
                        MB_OKCANCEL|MB_DEFBUTTON2)) {
@@ -204,8 +203,8 @@ public:
     uint32_t ThawInt(const std::string &key, uint32_t defaultValue) {
         DWORD value;
         DWORD type, length = sizeof(value);
-        LSTATUS result = RegQueryValueEx(GetKey(), &Widen(key)[0], 0,
-                                         &type, (BYTE *)&value, &length);
+        LSTATUS result = RegQueryValueExW(GetKey(), &Widen(key)[0], 0,
+                                          &type, (BYTE *)&value, &length);
         if(result == ERROR_SUCCESS && type == REG_DWORD) {
             return value;
         }
@@ -220,8 +219,8 @@ public:
     double ThawFloat(const std::string &key, double defaultValue) {
         double value;
         DWORD type, length = sizeof(value);
-        LSTATUS result = RegQueryValueEx(GetKey(), &Widen(key)[0], 0,
-                                         &type, (BYTE *)&value, &length);
+        LSTATUS result = RegQueryValueExW(GetKey(), &Widen(key)[0], 0,
+                                          &type, (BYTE *)&value, &length);
         if(result == ERROR_SUCCESS && type == REG_QWORD) {
             return value;
         }
@@ -238,13 +237,13 @@ public:
 
     std::string ThawString(const std::string &key, const std::string &defaultValue) {
         DWORD type, length = 0;
-        LSTATUS result = RegQueryValueEx(GetKey(), &Widen(key)[0], 0,
-                                         &type, NULL, &length);
+        LSTATUS result = RegQueryValueExW(GetKey(), &Widen(key)[0], 0,
+                                          &type, NULL, &length);
         if(result == ERROR_SUCCESS && type == REG_SZ) {
             std::wstring valueW;
             valueW.resize(length / 2 - 1);
-            sscheck(RegQueryValueEx(GetKey(), &Widen(key)[0], 0,
-                                    &type, (BYTE *)&valueW[0], &length));
+            sscheck(RegQueryValueExW(GetKey(), &Widen(key)[0], 0,
+                                     &type, (BYTE *)&valueW[0], &length));
             return Narrow(valueW);
         }
         return defaultValue;
@@ -539,7 +538,7 @@ public:
         static bool registered;
         if(registered) return;
 
-        WNDCLASSEX wc = {};
+        WNDCLASSEXW wc = {};
         wc.cbSize        = sizeof(wc);
         wc.style         = CS_BYTEALIGNCLIENT|CS_BYTEALIGNWINDOW|CS_OWNDC|CS_DBLCLKS;
         wc.lpfnWndProc   = WndProc;
@@ -550,7 +549,7 @@ public:
                                             IMAGE_ICON, 16, 16, 0);
         wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
         wc.lpszClassName = L"SolveSpace";
-        sscheck(RegisterClassEx(&wc));
+        sscheck(RegisterClassExW(&wc));
         registered = true;
     }
 
@@ -703,7 +702,7 @@ public:
         // The wndproc may be called from within CreateWindowEx, and before we've associated
         // the window with the WindowImplWin32. In that case, just defer to the default wndproc.
         if(window == NULL) {
-            return DefWindowProc(h, msg, wParam, lParam);
+            return DefWindowProcW(h, msg, wParam, lParam);
         }
 
 #if defined(HAVE_SPACEWARE)
@@ -1000,7 +999,7 @@ public:
                     sscheck(SetForegroundWindow(hParent));
                     break;
                 } else {
-                    return DefWindowProc(h, msg, wParam, lParam);
+                    return DefWindowProcW(h, msg, wParam, lParam);
                 }
             }
 
@@ -1043,7 +1042,7 @@ public:
             }
 
             default:
-                return DefWindowProc(h, msg, wParam, lParam);
+                return DefWindowProcW(h, msg, wParam, lParam);
         }
 
         return 0;
@@ -1228,7 +1227,7 @@ public:
     }
 
     void SetCursor(Cursor cursor) override {
-        LPWSTR cursorName;
+        LPWSTR cursorName = IDC_ARROW;
         switch(cursor) {
             case Cursor::POINTER: cursorName = IDC_ARROW; break;
             case Cursor::HAND:    cursorName = IDC_HAND;  break;
@@ -1355,7 +1354,11 @@ public:
         SCROLLINFO si = {};
         si.cbSize = sizeof(si);
         si.fMask  = SIF_POS;
-        si.nPos   = (UINT)(pos * SCROLLBAR_UNIT);
+        sscheck(GetScrollInfo(hWindow, SB_VERT, &si));
+        if(si.nPos == (int)(pos * SCROLLBAR_UNIT))
+            return;
+
+        si.nPos   = (int)(pos * SCROLLBAR_UNIT);
         sscheck(SetScrollInfo(hWindow, SB_VERT, &si, /*redraw=*/TRUE));
 
         // Windows won't synthesize a WM_VSCROLL for us here.
@@ -1386,7 +1389,7 @@ WindowRef CreateWindow(Window::Kind kind, WindowRef parentWindow) {
 static HWND hSpaceWareDriverClass;
 
 void Open3DConnexion() {
-    HWND hSpaceWareDriverClass = FindWindowW(L"SpaceWare Driver Class", NULL);
+    hSpaceWareDriverClass = FindWindowW(L"SpaceWare Driver Class", NULL);
     if(hSpaceWareDriverClass != NULL) {
         SiInitialize();
     }

@@ -108,8 +108,8 @@ SCurve SCurve::MakeCopySplitAgainst(SShell *agnstA, SShell *agnstB,
             const Vector lineStart     = prev.p;
             const Vector lineDirection = (p->p).Minus(prev.p);
             std::sort(il.begin(), il.end(), [&](const SInter &a, const SInter &b) {
-                double ta = (a.p.Minus(lineStart)).DivPivoting(lineDirection);
-                double tb = (b.p.Minus(lineStart)).DivPivoting(lineDirection);
+                double ta = (a.p.Minus(lineStart)).DivProjected(lineDirection);
+                double tb = (b.p.Minus(lineStart)).DivProjected(lineDirection);
 
                 return (ta < tb);
             });
@@ -207,7 +207,6 @@ static bool KeepRegion(SSurface::CombineAs type, bool opA, SShell::Class shell, 
     bool inShell = (shell == SShell::Class::INSIDE),
          outSide = (shell == SShell::Class::OUTSIDE),
          inSame  = (shell == SShell::Class::COINC_SAME),
-//         inOpp   = (shell == SShell::Class::COINC_OPP),
          inOrig  = (orig == SShell::Class::INSIDE);
 
     if(!inOrig) return false;

@@ -763,6 +763,10 @@ void Constraint::MenuConstrain(Command id) {
         }
     }
 
+    if ((id == Command::DISTANCE_DIA || id == Command::ANGLE) && SS.immediatelyEditDimension) {
+        SS.GW.EditConstraint(c.h);
+    }
+
     SS.GW.ClearSelection();
 }
 

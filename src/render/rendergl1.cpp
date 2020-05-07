@@ -220,8 +220,9 @@ public:
     void SetCamera(const Camera &camera) override;
     void SetLighting(const Lighting &lighting) override;
 
-    void NewFrame() override;
+    void StartFrame() override;
     void FlushFrame() override;
+    void FinishFrame() override;
     std::shared_ptr<Pixmap> ReadFrame() override;
 
     void GetIdent(const char **vendor, const char **renderer, const char **version) override;
@@ -707,8 +708,8 @@ void OpenGl1Renderer::UpdateProjection() {
     UnSelectPrimitive();
 
     glViewport(0, 0,
-               camera.width  * camera.pixelRatio,
-               camera.height * camera.pixelRatio);
+               (GLsizei)(camera.width  * camera.pixelRatio),
+               (GLsizei)(camera.height * camera.pixelRatio));
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -751,7 +752,7 @@ void OpenGl1Renderer::UpdateProjection() {
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGl1Renderer::NewFrame() {
+void OpenGl1Renderer::StartFrame() {
     glEnable(GL_NORMALIZE);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -806,7 +807,12 @@ void OpenGl1Renderer::NewFrame() {
 
 void OpenGl1Renderer::FlushFrame() {
     UnSelectPrimitive();
+
     glFlush();
+}
+
+void OpenGl1Renderer::FinishFrame() {
+    glFinish();
 
     GLenum error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -815,8 +821,8 @@ void OpenGl1Renderer::FlushFrame() {
 }
 
 std::shared_ptr<Pixmap> OpenGl1Renderer::ReadFrame() {
-    int width  = camera.width  * camera.pixelRatio;
-    int height = camera.height * camera.pixelRatio;
+    int width  = (int)(camera.width  * camera.pixelRatio);
+    int height = (int)(camera.height * camera.pixelRatio);
     std::shared_ptr<Pixmap> pixmap =
         Pixmap::Create(Pixmap::Format::RGB, (size_t)width, (size_t)height);
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixmap->data[0]);

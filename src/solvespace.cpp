@@ -72,6 +72,8 @@ void SolveSpaceUI::Init() {
     drawBackFaces = settings->ThawBool("DrawBackFaces", true);
     // Use turntable mouse navigation
     turntableNav = settings->ThawBool("TurntableNav", false);
+    // Immediately edit dimension
+    immediatelyEditDimension = settings->ThawBool("ImmediatelyEditDimension", false);
     // Check that contours are closed and not self-intersecting
     checkClosedContour = settings->ThawBool("CheckClosedContour", true);
     // Enable automatic constrains for lines
@@ -251,6 +253,8 @@ void SolveSpaceUI::Exit() {
     settings->FreezeBool("CheckClosedContour", checkClosedContour);
     // Use turntable mouse navigation
     settings->FreezeBool("TurntableNav", turntableNav);
+    // Immediately edit dimensions
+    settings->FreezeBool("ImmediatelyEditDimension", immediatelyEditDimension);
     // Enable automatic constrains for lines
     settings->FreezeBool("AutomaticLineConstraints", automaticLineConstraints);
     // Export shaded triangles in a 2d view
@@ -357,7 +361,7 @@ std::string SolveSpaceUI::MmToStringSI(double v, int dim) {
     }
 
     v /= pow((viewUnits == Unit::INCHES) ? 25.4 : 1000, dim);
-    int vdeg = floor((log10(fabs(v))) / dim);
+    int vdeg = (int)((log10(fabs(v))) / dim);
     std::string unit;
     if(fabs(v) > 0.0) {
         int sdeg = 0;
@@ -367,7 +371,7 @@ std::string SolveSpaceUI::MmToStringSI(double v, int dim) {
             : SelectSIPrefixMm(vdeg);
         v /= pow(10.0, sdeg * dim);
     }
-    int pdeg = ceil(log10(fabs(v) + 1e-10));
+    int pdeg = (int)ceil(log10(fabs(v) + 1e-10));
     return ssprintf("%#.*g%s%s%s", pdeg + UnitDigitsAfterDecimal(), v,
                     compact ? "" : " ", unit.c_str(), DimToString(dim));
 }
@@ -798,8 +802,6 @@ void SolveSpaceUI::MenuAnalyze(Command id) {
         case Command::AREA: {
             Group *g = SK.GetGroup(SS.GW.activeGroup);
             SS.GW.GroupSelection();
-            auto const &gs = SS.GW.gs;
-            double scale = SS.MmPerUnit();
 
             if(gs.faces > 0) {
                 std::vector<uint32_t> faces;
@@ -841,8 +843,8 @@ void SolveSpaceUI::MenuAnalyze(Command id) {
             if(gs.n > 0 && gs.n == gs.entities) {
                 double perimeter = 0.0;
                 for(int i = 0; i < gs.entities; i++) {
-                    Entity *e = SK.entity.FindById(gs.entity[i]);
-                    SEdgeList *el = e->GetOrGenerateEdges();
+                    Entity *en = SK.entity.FindById(gs.entity[i]);
+                    SEdgeList *el = en->GetOrGenerateEdges();
                     for(const SEdge &e : el->l) {
                         perimeter += e.b.Minus(e.a).Magnitude();
                     }

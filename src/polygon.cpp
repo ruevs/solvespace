@@ -164,13 +164,13 @@ bool SEdge::EdgeCrosses(Vector ea, Vector eb, Vector *ppi, SPointList *spl) cons
         // on the other
         bool inters = false;
         double t;
-        t = a.Minus(ea).DivPivoting(d);
+        t = a.Minus(ea).DivProjected(d);
         if(t > t_eps && t < (1 - t_eps)) inters = true;
-        t = b.Minus(ea).DivPivoting(d);
+        t = b.Minus(ea).DivProjected(d);
         if(t > t_eps && t < (1 - t_eps)) inters = true;
-        t = ea.Minus(a).DivPivoting(dthis);
+        t = ea.Minus(a).DivProjected(dthis);
         if(t > tthis_eps && t < (1 - tthis_eps)) inters = true;
-        t = eb.Minus(a).DivPivoting(dthis);
+        t = eb.Minus(a).DivProjected(dthis);
         if(t > tthis_eps && t < (1 - tthis_eps)) inters = true;
 
         if(inters) {
@@ -224,7 +224,7 @@ void SEdgeList::AddEdge(Vector a, Vector b, int auxA, int auxB, int tag) {
 }
 
 bool SEdgeList::AssembleContour(Vector first, Vector last, SContour *dest,
-                                SEdge *errorAt, bool keepDir) const
+                                SEdge *errorAt, bool keepDir, int start) const
 {
     int i;
 
@@ -232,7 +232,7 @@ bool SEdgeList::AssembleContour(Vector first, Vector last, SContour *dest,
     dest->AddPoint(last);
 
     do {
-        for(i = 0; i < l.n; i++) {
+        for(i = start; i < l.n; i++) {
             /// @todo fix const!
             SEdge *se = const_cast<SEdge*>(&(l[i]));
             if(se->tag) continue;
@@ -269,31 +269,25 @@ bool SEdgeList::AssemblePolygon(SPolygon *dest, SEdge *errorAt, bool keepDir) co
     dest->Clear();
 
     bool allClosed = true;
-    for(;;) {
-        Vector first = Vector::From(0, 0, 0);
-        Vector last  = Vector::From(0, 0, 0);
-        int i;
-        for(i = 0; i < l.n; i++) {
-            if(!l[i].tag) {
-                first = l[i].a;
-                last = l[i].b;
-                /// @todo fix const!
-                const_cast<SEdge*>(&(l[i]))->tag = 1;
-                break;
+    Vector first = Vector::From(0, 0, 0);
+    Vector last  = Vector::From(0, 0, 0);
+    int i;
+    for(i = 0; i < l.n; i++) {
+        if(!l[i].tag) {
+            first = l[i].a;
+            last = l[i].b;
+            /// @todo fix const!
+            const_cast<SEdge*>(&(l[i]))->tag = 1;
+            // Create a new empty contour in our polygon, and finish assembling
+            // into that contour.
+            dest->AddEmptyContour();
+            if(!AssembleContour(first, last, dest->l.Last(), errorAt, keepDir, i+1)) {
+                allClosed = false;
             }
+            // But continue assembling, even if some of the contours are open
         }
-        if(i >= l.n) {
-            return allClosed;
-        }
-
-        // Create a new empty contour in our polygon, and finish assembling
-        // into that contour.
-        dest->AddEmptyContour();
-        if(!AssembleContour(first, last, dest->l.Last(), errorAt, keepDir)) {
-            allClosed = false;
-        }
-        // But continue assembling, even if some of the contours are open
     }
+    return allClosed;
 }
 
 //-----------------------------------------------------------------------------
@@ -302,16 +296,10 @@ bool SEdgeList::AssemblePolygon(SPolygon *dest, SEdge *errorAt, bool keepDir) co
 // but they are considered to cross if they are coincident and overlapping.
 // If pi is not NULL, then a crossing is returned in that.
 //-----------------------------------------------------------------------------
-int SEdgeList::AnyEdgeCrossings(Vector a, Vector b,
-                                Vector *ppi, SPointList *spl) const
-{
-    int cnt = 0;
-    for(const SEdge *se = l.First(); se; se = l.NextAfter(se)) {
-        if(se->EdgeCrosses(a, b, ppi, spl)) {
-            cnt++;
-        }
-    }
-    return cnt;
+int SEdgeList::AnyEdgeCrossings(Vector a, Vector b, Vector *ppi, SPointList *spl) const {
+    auto cnt = std::count_if(l.begin(), l.end(),
+                             [&](SEdge const &se) { return se.EdgeCrosses(a, b, ppi, spl); });
+    return static_cast<int>(cnt);
 }
 
 //-----------------------------------------------------------------------------
@@ -500,8 +488,8 @@ void SEdgeList::MergeCollinearSegments(Vector a, Vector b) {
     const Vector lineStart = a;
     const Vector lineDirection = b.Minus(a);
     std::sort(l.begin(), l.end(), [&](const SEdge &a, const SEdge &b) {
-        double ta = (a.a.Minus(lineStart)).DivPivoting(lineDirection);
-        double tb = (b.a.Minus(lineStart)).DivPivoting(lineDirection);
+        double ta = (a.a.Minus(lineStart)).DivProjected(lineDirection);
+        double tb = (b.a.Minus(lineStart)).DivProjected(lineDirection);
 
         return (ta < tb);
     });
@@ -706,15 +694,10 @@ bool SPolygon::ContainsPoint(Vector p) const {
     return (WindingNumberForPoint(p) % 2) == 1;
 }
 
-int SPolygon::WindingNumberForPoint(Vector p) const {
-    int winding = 0;
-    int i;
-    for(i = 0; i < l.n; i++) {
-        const SContour *sc = &(l[i]);
-        if(sc->ContainsPointProjdToNormal(normal, p)) {
-            winding++;
-        }
-    }
+size_t SPolygon::WindingNumberForPoint(Vector p) const {
+    auto winding = std::count_if(l.begin(), l.end(), [&](const SContour &sc) {
+        return sc.ContainsPointProjdToNormal(normal, p);
+    });
     return winding;
 }
 

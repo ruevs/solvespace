@@ -7,8 +7,10 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
             "    mkdir build && cd build && cmake ..")
 endif()
 
-cmake_minimum_required(VERSION 3.2.0 FATAL_ERROR)
-cmake_policy(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.7.2 FATAL_ERROR)
+if(NOT CMAKE_VERSION VERSION_LESS 3.11.0)
+    cmake_policy(VERSION 3.11.0)
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_CXX_STANDARD 11)
@@ -49,6 +51,9 @@ set(OPENGL 3 CACHE STRING "OpenGL version to use (one of: 1 3)")
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH    ${CMAKE_BINARY_DIR}/bin)
+if("${CMAKE_GENERATOR}" STREQUAL "Xcode")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_BINARY_DIR}/bin>)
+endif()
 
 if(NOT CMAKE_C_COMPILER_ID STREQUAL CMAKE_CXX_COMPILER_ID)
     message(FATAL_ERROR "C and C++ compilers should be supplied by the same vendor")
@@ -63,14 +68,32 @@ endif()
 
 # common compiler flags
 
+include(CheckCXXCompilerFlag)
+
+set(FILE_PREFIX_MAP "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=.")
+check_cxx_compiler_flag("${FILE_PREFIX_MAP}" HAS_FILE_PREFIX_MAP)
+if(HAS_FILE_PREFIX_MAP)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FILE_PREFIX_MAP}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FILE_PREFIX_MAP}")
+endif()
+
 if(MINGW)
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -static-libgcc")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+endif()
 
-    if(TRIPLE STREQUAL "i686-w64-mingw32")
-        set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -msse2")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+# Ensure that all platforms use 64-bit IEEE floating point operations for consistency;
+# this is most important for the testsuite, which compares savefiles directly
+# and depends on consistent rounding of intermediate results.
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "X86")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set(FLOAT_FLAGS "-mfpmath=sse -msse2")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(FLOAT_FLAGS "-msse2")
     endif()
+
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${FLOAT_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLOAT_FLAGS}")
 endif()
 
 if(APPLE OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
@@ -130,11 +153,9 @@ if(WIN32 OR APPLE)
     include(FindVendoredPackage)
     include(AddVendoredSubdirectory)
 
-    if(APPLE)
-        set(FORCE_VENDORED_ZLIB     ON)
-        set(FORCE_VENDORED_PNG      ON)
-        set(FORCE_VENDORED_Freetype ON)
-    endif()
+    set(FORCE_VENDORED_ZLIB     ON)
+    set(FORCE_VENDORED_PNG      ON)
+    set(FORCE_VENDORED_Freetype ON)
 
     find_vendored_package(ZLIB zlib
         ZLIB_LIBRARY            zlibstatic

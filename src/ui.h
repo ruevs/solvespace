@@ -105,6 +105,9 @@ enum class Command : uint32_t {
     ROTATE_90,
     UNSELECT_ALL,
     REGEN_ALL,
+    EDIT_LINE_STYLES,
+    VIEW_PROJECTION,
+    CONFIGURATION,
     // Request
     SEL_WORKPLANE,
     FREE_IN_3D,
@@ -253,6 +256,7 @@ public:
     void ClearScreen();
 
     void Show();
+    void Resize();
 
     // State for the screen that we are showing in the text window.
     enum class Screen : uint32_t {
@@ -429,6 +433,7 @@ public:
     static void ScreenChangeShowContourAreas(int link, uint32_t v);
     static void ScreenChangeCheckClosedContour(int link, uint32_t v);
     static void ScreenChangeTurntableNav(int link, uint32_t v);
+    static void ScreenChangeImmediatelyEditDimension(int link, uint32_t v);
     static void ScreenChangeAutomaticLineConstraints(int link, uint32_t v);
     static void ScreenChangePwlCurves(int link, uint32_t v);
     static void ScreenChangeCanvasSizeAuto(int link, uint32_t v);
@@ -689,6 +694,7 @@ public:
     void RemoveConstraintsForPointBeingDeleted(hEntity hpt);
     void FixConstraintsForRequestBeingDeleted(hRequest hr);
     void FixConstraintsForPointBeingDeleted(hEntity hpt);
+    void EditConstraint(hConstraint constraint);
 
     // A selected entity.
     class Selection {
