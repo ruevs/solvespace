@@ -209,8 +209,9 @@ class List {
 
 public:
     int  n = 0;
+    uint32_t cc = 0;
 
-    bool IsEmpty() const { return n == 0; }
+    bool IsEmpty() const { return 0 >= n; }  // A negative number of list elements?!
 
     void ReserveMore(int howMuch) {
         if(n + howMuch > elemsAllocated) {

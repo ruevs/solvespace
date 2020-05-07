@@ -286,6 +286,8 @@ void SContour::ClipEarInto(SMesh *m, int bp, double scaledEps) {
     l.RemoveTagged();
 }
 
+extern void DEBUGEDGELIST(SEdgeList *sel, SSurface *surf);
+
 void SContour::UvTriangulateInto(SMesh *m, SSurface *srf) {
     Vector tu, tv;
     srf->TangentsAt(0.5, 0.5, &tu, &tv);
@@ -351,6 +353,7 @@ void SContour::UvTriangulateInto(SMesh *m, SSurface *srf) {
         }
         if(bestEar < 0) {
             dbp("couldn't find an ear! fail");
+            DEBUGEDGELIST(&srf->edges, srf);
             return;
         }
         ClipEarInto(m, bestEar, scaledEps);

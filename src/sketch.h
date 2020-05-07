@@ -240,7 +240,7 @@ public:
         UNION           = 0,
         DIFFERENCE      = 1,
         ASSEMBLE        = 2,
-        INTERSECTION    = 3,
+        INTERSECTION    = 3
     };
     CombineAs meshCombine;
 
