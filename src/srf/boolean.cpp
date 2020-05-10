@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
-// Top-level functions to compute the Boolean union or difference between
-// two shells of rational polynomial surfaces.
+// Top-level functions to compute the Boolean union, difference or intersection
+// between two shells of rational polynomial surfaces.
 //
 // Copyright 2008-2013 Jonathan Westhues.
 //-----------------------------------------------------------------------------
@@ -229,7 +229,7 @@ static bool KeepRegion(SSurface::CombineAs type, bool opA, SShell::Class shell, 
             if(opA) {
                 return inShell;
             } else {
-                return inShell || inSame;   // "|| inSame" does not seem to make any difference?!
+                return inShell || inSame;
             }
 
         default: ssassert(false, "Unexpected combine type");
@@ -614,7 +614,7 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
                     bool bkwds = true;
                     if((tn.Cross(b.Minus(a))).Dot(sn) < 0) bkwds = !bkwds;
                     if((type == SSurface::CombineAs::DIFFERENCE && !opA) ||
-                       (type == SSurface::CombineAs::INTERSECTION)) { // ruevs: invert edges for intersection here?
+                       (type == SSurface::CombineAs::INTERSECTION)) { // Invert all newly created edges for intersection
                         bkwds = !bkwds;
                     }
                     if(bkwds) {

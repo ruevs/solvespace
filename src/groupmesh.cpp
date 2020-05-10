@@ -179,12 +179,12 @@ void Group::GenerateForBoolean(T *prevs, T *thiss, T *outs, Group::CombineAs how
             outs->MakeFromDifferenceOf(prevs, thiss);
             break;
 
-        case CombineAs::ASSEMBLE:
-            outs->MakeFromAssemblyOf(prevs, thiss);
-            break;
-
         case CombineAs::INTERSECTION:
             outs->MakeFromIntersectionOf(prevs, thiss);
+            break;
+
+        case CombineAs::ASSEMBLE:
+            outs->MakeFromAssemblyOf(prevs, thiss);
             break;
     }
 }

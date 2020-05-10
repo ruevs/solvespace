@@ -265,11 +265,12 @@ void SMesh::MakeFromUnionOf(SMesh *a, SMesh *b) {
     SBsp3 *bspb = SBsp3::FromMesh(b);
 
     flipNormal = false;
-    keepCoplanar = false;
+    keepInsideOtherShell = false;
+
+    keepCoplanar = true;
     AddAgainstBsp(b, bspa);
 
-    flipNormal = false;
-    keepCoplanar = true;
+    keepCoplanar = false;
     AddAgainstBsp(a, bspb);
 }
 
@@ -279,27 +280,35 @@ void SMesh::MakeFromDifferenceOf(SMesh *a, SMesh *b) {
 
     flipNormal = true;
     keepCoplanar = true;
+    keepInsideOtherShell = true;
     AddAgainstBsp(b, bspa);
 
     flipNormal = false;
     keepCoplanar = false;
+    keepInsideOtherShell = false;
     AddAgainstBsp(a, bspb);
 }
 
 void SMesh::MakeFromIntersectionOf(SMesh *a, SMesh *b) {
-	SMesh c = {};
+    /*	SMesh c = {};
 
-	c.MakeFromDifferenceOf(a, b);
-	MakeFromDifferenceOf(a, &c);
+            c.MakeFromDifferenceOf(a, b);
+            MakeFromDifferenceOf(a, &c);
 
-	c.Clear();
+            c.Clear();
+    */
 
-/*  SBsp3 *bspa = SBsp3::FromMesh(a);
+    SBsp3 *bspa = SBsp3::FromMesh(a);
     SBsp3 *bspb = SBsp3::FromMesh(b);
 
+    keepInsideOtherShell = true;
+    flipNormal = false;
+
+    keepCoplanar = false;
     AddAgainstBsp(a, bspb);
+
+    keepCoplanar = true;
     AddAgainstBsp(b, bspa);
-*/
 }
 
 void SMesh::MakeFromCopyOf(SMesh *a) {

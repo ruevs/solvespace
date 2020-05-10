@@ -1677,6 +1677,8 @@ std::vector<std::string> InitGui(int argc, char **argv) {
                                 FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
     }
 #endif
+
+    return args;
 }
 
 void RunGui() {

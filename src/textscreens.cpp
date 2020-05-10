@@ -210,11 +210,19 @@ void TextWindow::ScreenChangeGroupOption(int link, uint32_t v) {
             if(g->type == Group::Type::EXTRUDE) {
                 // When an extrude group is first created, it's positioned for a union
                 // extrusion. If no constraints were added, flip it when we switch between
-                // union and difference modes to avoid manual work doing the same.
-                if(g->meshCombine != (Group::CombineAs)v && g->GetNumConstraints() == 0 &&
-                        ((Group::CombineAs)v == Group::CombineAs::DIFFERENCE ||
-                        g->meshCombine == Group::CombineAs::DIFFERENCE)) {
-                    g->ExtrusionForceVectorTo(g->ExtrusionGetVector().Negated());
+                // union/assemble and difference/intersection modes to avoid manual work doing the same.
+                if(g->meshCombine != (Group::CombineAs)v && g->GetNumConstraints() == 0) {
+                    // I apologise for this if statement
+                    if((((Group::CombineAs::DIFFERENCE == g->meshCombine) ||
+                         (Group::CombineAs::INTERSECTION == g->meshCombine)) &&
+                        (Group::CombineAs::DIFFERENCE != (Group::CombineAs)v) &&
+                        (Group::CombineAs::INTERSECTION != (Group::CombineAs)v)) ||
+                       ((Group::CombineAs::DIFFERENCE != g->meshCombine) &&
+                        (Group::CombineAs::INTERSECTION != g->meshCombine) &&
+                        ((Group::CombineAs::DIFFERENCE == (Group::CombineAs)v) ||
+                         (Group::CombineAs::INTERSECTION == (Group::CombineAs)v)))) {
+                        g->ExtrusionForceVectorTo(g->ExtrusionGetVector().Negated());
+                    }
                 }
             }
             g->meshCombine = (Group::CombineAs)v;
