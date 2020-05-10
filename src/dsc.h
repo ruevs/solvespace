@@ -216,12 +216,12 @@ public:
     void ReserveMore(int howMuch) {
         if(n + howMuch > elemsAllocated) {
             elemsAllocated = n + howMuch;
-            T *newElem = (T *)MemAlloc((size_t)elemsAllocated*sizeof(T));
+            T *newElem = (T *)::operator new[]((size_t)elemsAllocated*sizeof(T));
             for(int i = 0; i < n; i++) {
                 new(&newElem[i]) T(std::move(elem[i]));
                 elem[i].~T();
             }
-            MemFree(elem);
+            ::operator delete[](elem);
             elem = newElem;
         }
     }
@@ -287,7 +287,7 @@ public:
     void Clear() {
         for(int i = 0; i < n; i++)
             elem[i].~T();
-        if(elem) MemFree(elem);
+        if(elem) ::operator delete[](elem);
         elem = NULL;
         n = elemsAllocated = 0;
     }
@@ -402,12 +402,12 @@ public:
     void ReserveMore(int howMuch) {
         if(n + howMuch > elemsAllocated) {
             elemsAllocated = n + howMuch;
-            T *newElem = (T *)MemAlloc((size_t)elemsAllocated*sizeof(T));
+            T *newElem = (T *)::operator new[]((size_t)elemsAllocated*sizeof(T));
             for(int i = 0; i < n; i++) {
                 new(&newElem[i]) T(std::move(elem[i]));
                 elem[i].~T();
             }
-            MemFree(elem);
+            ::operator delete[](elem);
             elem = newElem;
         }
     }
@@ -526,7 +526,7 @@ public:
 
     void DeepCopyInto(IdList<T,H> *l) {
         l->Clear();
-        l->elem = (T *)MemAlloc(elemsAllocated * sizeof(elem[0]));
+        l->elem = (T *)::operator new[](elemsAllocated * sizeof(elem[0]));
         for(int i = 0; i < n; i++)
             new(&l->elem[i]) T(elem[i]);
         l->elemsAllocated = elemsAllocated;
@@ -538,7 +538,7 @@ public:
             elem[i].Clear();
             elem[i].~T();
         }
-        if(elem) MemFree(elem);
+        if(elem) ::operator delete[](elem);
         elem = NULL;
         elemsAllocated = n = 0;
     }
