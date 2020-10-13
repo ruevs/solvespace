@@ -340,6 +340,57 @@ void SSurface::TangentsAt(double u, double v, Vector *tu, Vector *tv) const {
            den_u = 0,
            den_v = 0;
 
+ /*   if(0 == u) {
+        u += 0.000000001;
+    }
+    if(0 == v) {
+        v += 0.000000001;
+    }
+    if(1 == u) {
+        u -= 0.000000001;
+    }
+    if(1 == v) {
+        v -= 0.000000001;
+    }
+*/
+
+    if((EXACT(0.0 == u)) && (ctrl[0][0].EqualsExactly(ctrl[0][degn]))) {
+        u += LENGTH_EPS;
+    } else if((EXACT(1.0 == u)) && (ctrl[degm][0].EqualsExactly(ctrl[degm][degn]))) {
+        u -= LENGTH_EPS;
+    }
+
+    if((EXACT(0.0 == v)) && (ctrl[0][0].EqualsExactly(ctrl[degm][0]))) {
+        v += LENGTH_EPS;
+        dbp("NURBS patch pinched along 'u' at v=0 how did you do this?");
+    } else if((EXACT(1.0 == v)) && (ctrl[0][degn].EqualsExactly(ctrl[degm][degn]))) {
+        v -= LENGTH_EPS;
+        dbp("NURBS patch pinched along 'u' at v=1 how did you do this?");
+    }
+/*
+    for(int i = 0; i <= degm; i++) {
+        for(int j = 0; j <= degn; j++) {
+            dbp("%d, %d C %.3f W %.3f", i, j, ctrl[i][j], weight[i][j]);
+        }
+    }
+*/
+/*
+    for(auto a = trim.begin(); a != trim.end(); a++) {
+        dbp("%.3f %.3f %.3f %.3f %.3f %.3f", a->start.x, a->start.y, a->start.z, a->finish.x, a->finish.y,
+            a->finish.z);
+    }
+    if(0 != trim.n) {
+        if(trim[0].start.EqualsExactly(trim[trim.n - 2].finish)) {
+            den = 1;
+        }
+        if(trim[trim.n-1].start.EqualsExactly(trim[trim.n - 1].finish)) {
+            den = 2;
+        }
+    }
+
+    den = 0;
+*/
+doitagain:
     int i, j;
     for(i = 0; i <= degm; i++) {
         for(j = 0; j <= degn; j++) {
@@ -364,6 +415,22 @@ void SSurface::TangentsAt(double u, double v, Vector *tu, Vector *tv) const {
 
     *tv = ((num_v.ScaledBy(den)).Minus(num.ScaledBy(den_v)));
     *tv = tv->ScaledBy(1.0/(den*den));
+
+    if(tu->Equals(Vector::From(0, 0, 0))) {
+        dbp("Too small tu");
+    }
+
+    if(tv->Equals(Vector::From(0, 0, 0),1e-9)) {
+        dbp("Too small tv");
+/*
+        if(0.5 >= u) {  // u==0
+            u += 0.000000001;
+        } else { // u==1
+            u -= 0.000000001;
+        }
+        goto doitagain;   // This is the way. ;-)
+*/
+    }
 }
 
 Vector SSurface::NormalAt(Point2d puv) const {
@@ -373,7 +440,11 @@ Vector SSurface::NormalAt(Point2d puv) const {
 Vector SSurface::NormalAt(double u, double v) const {
     Vector tu, tv;
     TangentsAt(u, v, &tu, &tv);
-    return tu.Cross(tv);
+    Vector n = tu.Cross(tv);
+    if(EXACT(n.Magnitude() == 0)) {
+        dbp("Zero surface normal u,v = %lf, %lf", u, v);
+    }
+    return n;
 }
 
 void SSurface::ClosestPointTo(Vector p, Point2d *puv, bool mustConverge) {
