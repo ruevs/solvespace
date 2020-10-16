@@ -340,30 +340,60 @@ void SSurface::TangentsAt(double u, double v, Vector *tu, Vector *tv) const {
            den_u = 0,
            den_v = 0;
 
-    int i, j;
-    for(i = 0; i <= degm; i++) {
-        for(j = 0; j <= degn; j++) {
-            double Bi  = Bernstein(i, degm, u),
-                   Bj  = Bernstein(j, degn, v),
-                   Bip = BernsteinDerivative(i, degm, u),
-                   Bjp = BernsteinDerivative(j, degn, v);
+    int retry = 5;                              // We will try "retry" times to make the tangents longer
+    const double TANGENT_ZERO_TOLERANCE = 1e-9; // than this value by shifting u or v by LENGTH_EPS.
 
-            num = num.Plus(ctrl[i][j].ScaledBy(Bi*Bj*weight[i][j]));
-            den += weight[i][j]*Bi*Bj;
+    do {
+        for(int i = 0; i <= degm; i++) {
+            for(int j = 0; j <= degn; j++) {
+                double Bi = Bernstein(i, degm, u),
+                       Bj = Bernstein(j, degn, v),
+                       Bip = BernsteinDerivative(i, degm, u),
+                       Bjp = BernsteinDerivative(j, degn, v);
 
-            num_u = num_u.Plus(ctrl[i][j].ScaledBy(Bip*Bj*weight[i][j]));
-            den_u += weight[i][j]*Bip*Bj;
+                num = num.Plus(ctrl[i][j].ScaledBy(Bi * Bj * weight[i][j]));
+                den += weight[i][j] * Bi * Bj;
 
-            num_v = num_v.Plus(ctrl[i][j].ScaledBy(Bi*Bjp*weight[i][j]));
-            den_v += weight[i][j]*Bi*Bjp;
+                num_u = num_u.Plus(ctrl[i][j].ScaledBy(Bip * Bj * weight[i][j]));
+                den_u += weight[i][j] * Bip * Bj;
+
+                num_v = num_v.Plus(ctrl[i][j].ScaledBy(Bi * Bjp * weight[i][j]));
+                den_v += weight[i][j] * Bi * Bjp;
+            }
         }
-    }
-    // quotient rule; f(t) = n(t)/d(t), so f' = (n'*d - n*d')/(d^2)
-    *tu = ((num_u.ScaledBy(den)).Minus(num.ScaledBy(den_u)));
-    *tu = tu->ScaledBy(1.0/(den*den));
+        // quotient rule; f(t) = n(t)/d(t), so f' = (n'*d - n*d')/(d^2)
+        *tu = ((num_u.ScaledBy(den)).Minus(num.ScaledBy(den_u)));
+        *tu = tu->ScaledBy(1.0 / (den * den));
 
-    *tv = ((num_v.ScaledBy(den)).Minus(num.ScaledBy(den_v)));
-    *tv = tv->ScaledBy(1.0/(den*den));
+        *tv = ((num_v.ScaledBy(den)).Minus(num.ScaledBy(den_v)));
+        *tv = tv->ScaledBy(1.0 / (den * den));
+
+        // Check if we are trying to calculate a tengent "along" a degenerate (zero length)
+        // edge of a NURBS patch. In this case move the `u` or `v` parameter "inward" a bit.
+        if(tv->Equals(Vector::From(0, 0, 0), TANGENT_ZERO_TOLERANCE)) {
+            if(u < 0.5) {
+                u += LENGTH_EPS;
+            } else {
+                u -= LENGTH_EPS;
+            }
+            continue; // --retry;
+        }
+
+        if(tu->Equals(Vector::From(0, 0, 0), TANGENT_ZERO_TOLERANCE)) {
+            if(v < 0.5) {
+                v += LENGTH_EPS;
+            } else {
+                v -= LENGTH_EPS;
+            }
+            continue;   // --retry;
+        }
+
+        break; // We succeeded
+    } while(--retry > 0);
+
+    if(0 == retry) {
+        dbp("Zero length tangent to NURBS patch u=%lf v=%lf tu=%lf tv=%lf", u, v, tu->Magnitude(), tv->Magnitude());
+    }
 }
 
 Vector SSurface::NormalAt(Point2d puv) const {
