@@ -895,6 +895,27 @@ void GraphicsWindow::Paint() {
     UiCanvas uiCanvas = {};
     uiCanvas.canvas = canvas;
 
+    // Draw the bboxes
+    Entity *e;
+    for(e = SK.entity.First(); e; e = SK.entity.NextAfter(e)) {
+        if(e->group != SS.GW.activeGroup)
+            continue;
+        if(e->IsFace() || e->IsDistance())
+            continue;
+        if(!e->IsVisible())
+            continue;
+        bool entityHasBBox;
+        BBox entityBBox = e->GetOrGenerateScreenBBox(&entityHasBBox);
+        if(entityHasBBox) {
+            uiCanvas.DrawRect((int)(entityBBox.minp.x - 1) + (int)camera.width / 2,
+                              (int)(entityBBox.maxp.x + 1) + (int)camera.width / 2,
+                              (int)(entityBBox.minp.y - 1) + (int)camera.height / 2,
+                              (int)(entityBBox.maxp.y + 1) + (int)camera.height / 2,
+                              /*fillColor=*/Style::Color(Style::HOVERED).WithAlpha(25),
+                              /*outlineColor=*/Style::Color(Style::HOVERED));
+        }
+    }
+
     // If a marquee selection is in progress, then draw the selection
     // rectangle, as an outline and a transparent fill.
     if(pending.operation == Pending::DRAGGING_MARQUEE) {
