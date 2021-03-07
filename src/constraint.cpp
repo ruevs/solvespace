@@ -197,6 +197,16 @@ bool Constraint::ConstrainCubicLineTangent(Constraint *c, Entity *line, Entity *
                 "at which you want it to be tangent to the line."));
         return false;
     }
+    // Look for existing constraint. If found constrain the other two points
+    auto existing = std::find_if(SK.constraint.begin(), SK.constraint.end(),
+                                 [&](ConstraintBase const &con) {
+                                     return (con.type == Constraint::Type::CUBIC_LINE_TANGENT) &&
+                                            ((con.entityA == line->h && con.entityB == cubic->h) ||
+                                             (con.entityB == line->h && con.entityA == cubic->h));
+                                 });
+    if(existing != SK.constraint.end()) {
+        c->other = !existing->other;
+    }
     return true;
 }
 
@@ -247,6 +257,17 @@ bool Constraint::ConstrainCurveCurveTangent(Constraint *c, Entity *eA, Entity *e
                 "Alternatively select the end points of both "
                 "curves at which you want the curves to be tangent."));
                 return false;
+    }
+    // Look for existing constraint. If found constrain the other two points
+    auto existing = std::find_if(SK.constraint.begin(), SK.constraint.end(),
+                                 [&](ConstraintBase const &con) {
+                                     return (con.type == Constraint::Type::CURVE_CURVE_TANGENT) &&
+                                            ((con.entityA == eA->h && con.entityB == eB->h) ||
+                                             (con.entityA == eB->h && con.entityB == eA->h));
+                                 });
+    if(existing != SK.constraint.end()) {
+        c->other = !existing->other;
+        c->other2 = !existing->other2;
     }
     return true;
 }
