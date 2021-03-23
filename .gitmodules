@@ -26,3 +26,6 @@
 [submodule "extlib/eigen"]
 	path = extlib/eigen
 	url = https://gitlab.com/libeigen/eigen.git
+[submodule "extlib/libspnavdev"]
+	path = extlib/libspnavdev
+	url = https://github.com/rpavlik/libspnavdev.git
