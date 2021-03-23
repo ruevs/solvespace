@@ -51,6 +51,10 @@ if(SPACEWARE_FOUND)
         ${SPACEWARE_LIBRARIES})
 endif()
 
+if(HAVE_SPNAVDEV)
+    target_link_libraries(slvs_deps INTERFACE spnavdev)
+endif()
+
 if(ENABLE_OPENMP)
     target_link_libraries(slvs_deps INTERFACE slvs_openmp)
 endif()
@@ -265,6 +269,7 @@ if(ENABLE_GUI)
     add_executable(solvespace WIN32 MACOSX_BUNDLE
         ${solvespace_core_gl_SOURCES}
         platform/entrygui.cpp
+        platform/spnavdevice.cpp
         $<TARGET_PROPERTY:resources,EXTRA_SOURCES>)
 
     add_dependencies(solvespace
@@ -376,6 +381,7 @@ if(ENABLE_GUI)
         set_target_properties(solvespace PROPERTIES
             LINK_FLAGS "/MANIFEST:NO /SAFESEH:NO /INCREMENTAL:NO /OPT:REF")
     endif()
+
 endif()
 
 # solvespace headless library
