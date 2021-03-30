@@ -10,6 +10,7 @@
 #include "solvespace.h"
 
 #include <type_traits>
+#include <vector>
 
 /// Trait indicating which types are handle types and should get the associated operators.
 /// Specialize for each handle type and inherit from std::true_type.
@@ -374,11 +375,14 @@ public:
 // Comparison functor used by IdList and related classes
 template <class T, class H>
 struct CompareId {
-    bool operator()(T const& lhs, T const& rhs) const {
-        return lhs.h.v < rhs.h.v;
+    bool operator()(T const* lhs, T const& rhs) const {
+        return lhs->h.v < rhs.h.v;
     }
-    bool operator()(T const& lhs, H rhs) const {
-        return lhs.h.v < rhs.v;
+    bool operator()(T const* lhs, H rhs) const {
+        return lhs->h.v < rhs.v;
+    }
+    bool operator()(T const *lhs, T const *rhs) const {
+        return lhs->h.v < rhs->h.v;
     }
 };
 
@@ -387,21 +391,17 @@ struct CompareId {
 // id.
 template <class T, class H>
 class IdList {
-    T *elem            = nullptr;
+    std::vector<T> elemstore;
+    std::vector<T *> elemptr;
+    std::vector<T *> freelist;
     int elemsAllocated = 0;
 public:
-    int n = 0;
+    int n = 0;  // PAR@@@@@ make this private to see all interesting and suspicious places in SoveSpace ;-)
 
     using Compare = CompareId<T, H>;
 
     bool IsEmpty() const {
         return n == 0;
-    }
-
-    void AllocForOneMore() {
-        if(n >= elemsAllocated) {
-            ReserveMore((elemsAllocated + 32)*2 - n);
-        }
     }
 
     uint32_t MaximumId() {
@@ -414,10 +414,10 @@ public:
 
     H AddAndAssignId(T *t) {
         t->h.v = (MaximumId() + 1);
-        AllocForOneMore();
 
         // Copy-construct at the end of the list.
-        new(&elem[n]) T(*t);
+        elemstore.push_back(*t);
+        elemptr.push_back(&elemstore[n]);
         ++n;
 
         return t->h;
@@ -427,62 +427,78 @@ public:
         if(IsEmpty()) {
             return nullptr;
         }
-        auto it = std::lower_bound(begin(), end(), t, Compare());
-        return it;
+        auto it = std::lower_bound(elemptr.begin(), elemptr.end(), t, Compare());
+        if(it == elemptr.end()) {
+            return nullptr;
+        } else {
+            return *it;
+        }
     }
 
     T * LowerBound(H const& h) {
         if(IsEmpty()) {
             return nullptr;
         }
-        auto it = std::lower_bound(begin(), end(), h, Compare());
-        return it;
+        auto it = std::lower_bound(elemptr.begin(), elemptr.end(), h, Compare());
+        if(it == elemptr.end()) {
+            return nullptr;
+        } else {
+            return *it;
+        }
     }
 
     int LowerBoundIndex(T const& t) {
         if(IsEmpty()) {
             return 0;
         }
-        auto it = LowerBound(t);
-        auto idx = std::distance(begin(), it);
+        auto it  = std::lower_bound(elemptr.begin(), elemptr.end(), t, Compare());
+        auto idx = std::distance(elemptr.begin(), it);
         auto i = static_cast<int>(idx);
         return i;
     }
     void ReserveMore(int howMuch) {
         if(n + howMuch > elemsAllocated) {
             elemsAllocated = n + howMuch;
-            T *newElem = (T *)::operator new[]((size_t)elemsAllocated*sizeof(T));
-            for(int i = 0; i < n; i++) {
-                new(&newElem[i]) T(std::move(elem[i]));
-                elem[i].~T();
-            }
-            ::operator delete[](elem);
-            elem = newElem;
+            elemstore.reserve(elemsAllocated);
+            elemptr.reserve(elemsAllocated);
         }
     }
 
     void Add(T *t) {
-        AllocForOneMore();
-
         // Look to see if we already have something with the same handle value.
         ssassert(FindByIdNoOops(t->h) == nullptr, "Handle isn't unique");
 
         // Find out where the added element should be.
-        int pos = LowerBoundIndex(*t);
+        auto pos = std::lower_bound(elemptr.begin(), elemptr.end(), *t, Compare());
 
-        // Shift everything from there to the end of the array.
-        new(&elem[n]) T();
-        for (int i = n; i > pos; i--)
-            elem[i] = std::move(elem[i - 1]);
+        if(freelist.empty()) { // Add a new element to the store
+            elemstore.push_back(*t);
+            // Insert a pointer to the element at the correct position
+            if(elemptr.empty()) {
+                // The list was empty so far so pos, begin and end are all null.
+                // insert does not work in this case.
+                elemptr.push_back(&elemstore.back());
+            } else {
+                elemptr.insert(pos, &elemstore.back());
+            }
+        } else { // Use an element from the freelist
+            // Insert a pointer to the element at the correct position
+            elemptr.insert(pos, freelist.back());
+            // Remove the element from the freelist
+            freelist.pop_back();
 
-        // Copy-construct at the right place.
-        elem[pos] = T(*t);
+            // Copy-construct to the element storage.
+            auto idx = std::distance(elemptr.begin(), pos);
+            *elemptr[idx] = T(*t);
+//            *elemptr[pos] = *t;   // PAR@@@@@@ maybe this?
+        }
+
         ++n;
     }
 
     T *FindById(H h) {
         T *t = FindByIdNoOops(h);
-        ssassert(t != NULL, "Cannot find handle");
+        ssassert(t != nullptr, "Cannot find handle");
         return t;
     }
 
@@ -490,12 +506,13 @@ public:
         if(IsEmpty()) {
             return -1;
         }
-        auto it = LowerBound(h);
-        auto idx = std::distance(begin(), it);
-        if (idx < n) {
+        auto it  = std::lower_bound(elemptr.begin(), elemptr.end(), h, Compare());
+        auto idx = std::distance(elemptr.begin(), it);
+        if(it == elemptr.end()) {
+            return -1;
+        } else {
             return idx;
         }
-        return -1;
     }
 
     T *FindByIdNoOops(H h) {
@@ -513,26 +530,36 @@ public:
     }
 
     T *First() {
-        return (IsEmpty()) ? NULL : &(elem[0]);
+        return begin();
     }
     T *Last() {
-        return (IsEmpty()) ? NULL : &(elem[n-1]);
-    }
-    T *NextAfter(T *prev) {
-        if(IsEmpty() || !prev) return NULL;
-        if(prev - First() == (n - 1)) return NULL;
-        return prev + 1;
+        return end();
     }
 
-    T &Get(size_t i) { return elem[i]; }
-    T const &Get(size_t i) const { return elem[i]; }
+    // Remove this entirely?!? 199 places in the code mostly for loops?
+    T *NextAfter(T *prev) {
+        if(IsEmpty() || !prev) {
+            return nullptr;
+        }
+
+        // PAR@@@@ This is slower than before now. O(log(n)) was O(1)
+        auto it = std::upper_bound(elemptr.begin(), elemptr.end(), prev, Compare());
+        if(it == elemptr.end()) {
+            return nullptr;
+        } else {
+            return *it;
+        }
+    }
+
+    T &Get(size_t i) { return *elemptr[i]; }
+    T const &Get(size_t i) const { return *elemptr[i]; }
     T &operator[](size_t i) { return Get(i); }
     T const &operator[](size_t i) const { return Get(i); }
 
-    T *begin() { return IsEmpty() ? nullptr : &elem[0]; }
-    T *end() { return IsEmpty() ? nullptr : &elem[0] + n; }
-    const T *begin() const { return IsEmpty() ? nullptr : &elem[0]; }
-    const T *end() const { return IsEmpty() ? nullptr : &elem[0] + n; }
+    T *begin() { return IsEmpty() ? nullptr : elemptr.front(); }
+    T *end() { return IsEmpty() ? nullptr : elemptr.back(); }
+    const T *begin() const { return IsEmpty() ? nullptr : elemptr.front(); }
+    const T *end() const { return IsEmpty() ? nullptr : elemptr.back(); }
     const T *cbegin() const { return begin(); }
     const T *cend() const { return end(); }
 
@@ -551,22 +578,36 @@ public:
         int src, dest;
         dest = 0;
         for(src = 0; src < n; src++) {
-            if(elem[src].tag) {
+            if(elemptr[src]->tag) {
                 // this item should be deleted
-                elem[src].Clear();
+                elemptr[src]->Clear();
+                elemptr[src]->~T();
+                freelist.push_back(elemptr[src]);
+                elemptr[src] = nullptr; // PAR@@@@@ just for debugging, not needed, remove later
             } else {
                 if(src != dest) {
-                    elem[dest] = elem[src];
+                    elemptr[dest] = elemptr[src];
                 }
                 dest++;
             }
         }
-        for(int i = dest; i < n; i++)
-            elem[i].~T();
         n = dest;
+
+/*  Nott needed because for the freelist
+        // Now compact the element storage by allocating a new one and moving the ements to it PAR@@@@  Slower than before
+        T *newElem     = (T *)::operator new[]((size_t)elemsAllocated * sizeof(T));
+        for(int i = 0; i < n; i++) {
+            new(&newElem[i]) T(std::move(*elemptr[i]));
+            elemptr[i]->Clear();
+            elemptr[i]->~T();
+            elemptr[i] = &newElem[i];
+        }
+        ::operator delete[](elemstore);
+        elemstore = newElem;
+*/
         // and elemsAllocated is untouched, because we didn't resize
     }
-    void RemoveById(H h) {
+    void RemoveById(H h) {  // PAR@@@@@ this can be optimized
         ClearTags();
         FindById(h)->tag = 1;
         RemoveTagged();
@@ -574,27 +615,44 @@ public:
 
     void MoveSelfInto(IdList<T,H> *l) {
         l->Clear();
-        std::swap(l->elem, elem);
+        std::swap(l->elemstore, elemstore);
+        std::swap(l->elemptr, elemptr);
+        std::swap(l->freelist, freelist);
         std::swap(l->elemsAllocated, elemsAllocated);
         std::swap(l->n, n);
     }
 
     void DeepCopyInto(IdList<T,H> *l) {
         l->Clear();
-        l->elem = (T *)::operator new[](elemsAllocated * sizeof(elem[0]));
-        for(int i = 0; i < n; i++)
-            new(&l->elem[i]) T(elem[i]);
-        l->elemsAllocated = elemsAllocated;
-        l->n = n;
+//        l->elemstor.reserve(elemstor.capacity());   // Make the element store the same size as tours since the freelist may point to elements
+// no need do not waste memory
+        for(auto const &it : elemstore) {
+            l->elemstore.push_back(it);
+        }
+
+        for(auto const &it : elemptr) {
+            l->elemptr.push_back(it);
+        }
+
+/* Do not copy the freelist - no need to waste memory.
+        for(auto &it : freelist) {
+            l->freelist.push_back(it);
+        }
+*/
+
+//        l->elemsAllocated = elemsAllocated;
+        l->elemsAllocated = n;
+        l->n              = n;
     }
 
     void Clear() {
-        for(int i = 0; i < n; i++) {
-            elem[i].Clear();
-            elem[i].~T();
+        for(auto &it : elemptr) {
+            it->Clear();
+            it->~T();
         }
-        if(elem) ::operator delete[](elem);
-        elem = NULL;
+        freelist.clear();
+        elemptr.clear();
+        elemstore.clear();
         elemsAllocated = n = 0;
     }
 
