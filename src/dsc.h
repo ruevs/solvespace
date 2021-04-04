@@ -402,130 +402,11 @@ private:
     const IdList<T, H> *idlist;
 };
 
-
-template<typename T, typename H>
-class IdListIterator { // an iterator for the list
-    friend class IdList<T, H>;
-
-public:
-    T& operator*() const noexcept {
-        ssassert(0 == isInBounds(), "Dereferencing out of bounds iterator");
-        return *elem;
-    }
-    const T* operator->() const noexcept {
-        ssassert(0 == isInBounds(), "Dereferencing out of bounds iterator");
-        return &(list->elemstore[list->elemidx[position]]);
-        return elem;
-    }
-
-    T& operator=(const T& e) const noexcept {
-        ssassert(0 == isInBounds(), "Assigning to out of bounds iterator");
-        *elem = e;
-        return *this;
-    }
-
-    T &operator=(const H h) const noexcept {
-        ssassert(0 == isInBounds(), "Assigning to out of bounds iterator");
-        elem->h = e;
-        return *this;
-    }
-
-    bool operator==(const IdListIterator &p) const {
-        ssassert(list == p.list, "Comparison of iterators of different lists");
-        if(isInBounds() && p.isInBounds())
-            return p.position == position;
-        else
-            return p.outOfBounds == outOfBounds;
-    }
-    bool operator<(const IdListIterator &p) const {
-        ssassert(list == p.list, "Comparison of iterators of different lists");
-        if(p.isInBounds()) {
-            if(!isInBounds())
-                return outOfBounds < 0; // < if we are out of bounds at the beginning
-            return position < p.position;
-        } else if(isInBounds()) {
-            return 0 < p.outOfBounds; // < if compared iterator is out of bounds at the end
-        } else {                      // both iterators are before or after their beginnings or ends
-            return outOfBounds < p.outOfBounds;
-        }
-    }
-    bool operator!=(const IdListIterator &p) const {
-        return !operator==(p);
-    }
-    bool operator>(const IdListIterator &p) const {
-        return operator!=(p) && !operator<(p);
-    }
-    bool operator>=(const IdListIterator &p) const {
-        return !operator<(p);
-    }
-    bool operator<=(const IdListIterator &p) const {
-        return !operator>(p);
-    }
-
-    IdListIterator &operator++() {
-        if(isInBounds()) {
-            ++position;
-            if(position == list->elemidx.size()) {
-                outOfBounds = 1;
-                elem        = nullptr; // PAR@@@@ Remove just debugging
-            } else {
-                elem = &(list->elemstore[list->elemidx[position]]);
-            }
-        } else {
-            outOfBounds++;
-        }
-        return *this;
-    }
-    IdListIterator &operator--() {
-        if(isInBounds()) {
-            if(position == 0) { // move one backwards out-of-bounds
-                outOfBounds = -1;
-                elem        = nullptr; // PAR@@@@ Remove just debugging
-            } else {
-                --position;
-                elem = &(list->elemstore[list->elemidx[position]]);
-            }
-        } else {
-            outOfBounds--;
-            if(outOfBounds == 0) {
-                // iterator was at end (+1)
-                position = list->elemidx.size() - 1;
-                elem     = &(list->elemstore[list->elemidx[position]]);
-            }
-        }
-        return *this;
-    }
-    bool isInBounds() const {
-        return outOfBounds == 0;
-    }
-
-    // The constructors are private so only IdList can create iterators.
-    IdListIterator(const IdList<T, H> *l) : list(l), outOfBounds(0) {
-        position = 0;
-        elem     = &(list->elemstore[list->elemidx[position]]);
-    };
-    IdListIterator(const IdListIterator<T, H> &iter)
-        : list(iter.list), outOfBounds(iter.outOfBounds), position(iter.position),
-          elem(iter.elem){};
-    IdListIterator(const IdList<T, H> *l, int pos, int relToBounds = 0)
-        : list(l), position(pos), outOfBounds(relToBounds) {
-        elem = &((list->elemstore)[list->elemidx[position]]);
-    };
-
-private:
-    int position;
-    T *elem;
-    const IdList<T, H> *list; // pointer to the list
-    int outOfBounds;          // before the beginning (-1) or after the end (+1), else 0
-};
-
 // A list, where each element has an integer identifier. The list is kept
 // sorted by that identifier, and items can be looked up in log n time by
 // id.
 template <class T, class H>
 class IdList {
-    friend class IdListIterator<T, H>;
-
     std::vector<T> elemstore;
     std::vector<int> elemidx;
     std::vector<int> freelist;
@@ -534,7 +415,123 @@ public:
 
     friend struct CompareId<T, H>;
     using Compare = CompareId<T, H>;
-    using iterator = IdListIterator<T, H>;
+
+    struct iterator {
+        typedef std::random_access_iterator_tag iterator_category;
+        typedef T value_type;
+        typedef int difference_type;
+        typedef T *pointer;
+        typedef T &reference;
+    public:
+        T &operator*() const noexcept {
+            ssassert(1 == isInBounds(), "Dereferencing out of bounds iterator");
+            return *elem;
+        }
+        const T *operator->() const noexcept {
+            ssassert(1 == isInBounds(), "Dereferencing out of bounds iterator");
+//            return &(list->elemstore[list->elemidx[position]]);
+            return elem;
+        }
+
+        T &operator=(const T &e) const noexcept {
+            ssassert(1 == isInBounds(), "Assigning to out of bounds iterator");
+            *elem = e;
+            return *this;
+        }
+        T &operator=(const H h) const noexcept {
+            ssassert(1 == isInBounds(), "Assigning to out of bounds iterator");
+            elem->h = e;
+            return *this;
+        }
+
+        bool operator==(const iterator &p) const {
+            ssassert(list == p.list, "Comparison of iterators of different lists");
+            if(isInBounds() && p.isInBounds())
+                return p.position == position;
+            else
+                return p.outOfBounds == outOfBounds;
+        }
+        bool operator<(const iterator &p) const {
+            ssassert(list == p.list, "Comparison of iterators of different lists");
+            if(p.isInBounds()) {
+                if(!isInBounds())
+                    return outOfBounds < 0; // < if we are out of bounds at the beginning
+                return position < p.position;
+            } else if(isInBounds()) {
+                return 0 < p.outOfBounds; // < if compared iterator is out of bounds at the end
+            } else { // both iterators are before or after their beginnings or ends
+                return outOfBounds < p.outOfBounds;
+            }
+        }
+        bool operator!=(const iterator &p) const { return !operator==(p); }
+        bool operator>(const iterator &p) const { return operator!=(p) && !operator<(p); }
+        bool operator>=(const iterator &p) const { return !operator<(p); }
+        bool operator<=(const iterator &p) const { return !operator>(p); }
+
+        iterator &operator++() {
+            if(isInBounds()) {
+                ++position;
+                if(position == list->elemidx.size()) {
+                    outOfBounds = 1;
+                    elem        = nullptr; // PAR@@@@ Remove just debugging
+                } else {
+                    elem = &(list->elemstore[list->elemidx[position]]);
+                }
+            } else {
+                outOfBounds++;
+            }
+            return *this;
+        }
+        iterator &operator--() {
+            if(isInBounds()) {
+                if(position == 0) { // move one backwards out-of-bounds
+                    outOfBounds = -1;
+                    elem        = nullptr; // PAR@@@@ Remove just debugging
+                } else {
+                    --position;
+                    elem = &(list->elemstore[list->elemidx[position]]);
+                }
+            } else {
+                outOfBounds--;
+                if(outOfBounds == 0) {
+                    // iterator was at end (+1)
+                    position = list->elemidx.size() - 1;
+                    elem     = &(list->elemstore[list->elemidx[position]]);
+                }
+            }
+            return *this;
+        }
+        bool isInBounds() const {
+            return outOfBounds == 0;
+        }
+
+        iterator(IdList<T, H> *l) : list(l), position(0), outOfBounds(0) {
+            if(list) {
+                if(list->elemstore.size() && list->elemidx.size()) {
+                    elem = &(list->elemstore[list->elemidx[position]]);
+                }
+            }
+        };
+        iterator(const iterator &iter)
+            : list(iter.list), position(iter.position), outOfBounds(iter.outOfBounds),
+              elem(iter.elem){};
+        iterator(IdList<T, H> *l, int pos, int relToBounds = 0)
+            : list(l), position(pos), outOfBounds(relToBounds) {
+            if(position == list->elemidx.size()) {
+                outOfBounds = 1;
+                elem        = nullptr;
+            } else {
+                elem = &((list->elemstore)[list->elemidx[position]]);
+            }
+        };
+
+    private:
+        int position;
+        T *elem;
+        IdList<T, H> *list;     // pointer to the list
+        int outOfBounds;        // before the beginning (-1) or after the end (+1), else 0
+    };
+
 
     bool IsEmpty() const {
         return n == 0;
@@ -594,10 +591,6 @@ public:
     }
 
     void Add(T *t) {
-//PAR@@@@       elemstore.reserve(3000);
-//       elemptr.reserve(3000);
-
-
         // Look to see if we already have something with the same handle value.
         ssassert(FindByIdNoOops(t->h) == nullptr, "Handle isn't unique");
 
@@ -630,7 +623,7 @@ public:
 
     T *FindById(H h) {
         T *t = FindByIdNoOops(h);
-//        ssassert(t != nullptr, "Cannot find handle");
+        ssassert(t != nullptr, "Cannot find handle");
         return t;
     }
 
@@ -644,7 +637,6 @@ public:
         } else {
             auto idx = std::distance(elemidx.begin(), it);
             return static_cast<int>(idx);
-//            return &elemstore[*it];
         }
     }
 
@@ -657,19 +649,18 @@ public:
             return nullptr;
         } else {
             if(elemstore[*it].h.v != h.v) {
-                dbp("lower_bound failed in FindByIdNoOops!?");
+//                dbp("lower_bound failed in FindByIdNoOops!?");    // This is normal when looking for non-existing elements - i.e. each Add operation
                 return nullptr;
             }
-            //            ssassert((*it)->h.v == h.v, "lower_bound failed in FindByIdNoOops!?"); // PAR@@@@@ this should not be possible - remove
             return &elemstore[*it];
         }
     }
 
     T *First() {
-        return &(*begin());
+        return (IsEmpty()) ? nullptr : &(elemstore[0]);
     }
     T *Last() {
-        return &(*end());
+        return (IsEmpty()) ? nullptr : &(elemstore[elemidx.back()]);
     }
 
     // Remove this entirely?!? 199 places in the code mostly for loops?
@@ -729,19 +720,6 @@ public:
         }
         n = dest;
 
-/*  Not needed because of the freelist
-        // Now compact the element storage by allocating a new one and moving the ements to it PAR@@@@  Slower than before
-        T *newElem     = (T *)::operator new[]((size_t)elemsAllocated * sizeof(T));
-        for(int i = 0; i < n; i++) {
-            new(&newElem[i]) T(std::move(*elemptr[i]));
-            elemptr[i]->Clear();
-            elemptr[i]->~T();
-            elemptr[i] = &newElem[i];
-        }
-        ::operator delete[](elemstore);
-        elemstore = newElem;
-*/
-        // and elemsAllocated is untouched, because we didn't resize
     }
     void RemoveById(H h) {  // PAR@@@@@ this can be optimized
         ClearTags();
@@ -759,7 +737,7 @@ public:
 
     void DeepCopyInto(IdList<T,H> *l) {
         l->Clear();
-//        l->elemstor.reserve(elemstor.capacity());   // Make the element store the same size as tours since the freelist may point to elements
+//        l->elemstor.reserve(elemstor.capacity());   // Make the element store the same size as ours since the freelist may point to elements
 // no need do not waste memory
         for(auto const &it : elemstore) {
             l->elemstore.push_back(it);
@@ -781,7 +759,7 @@ public:
     void Clear() {
         for(auto &it : elemidx) {
             elemstore[it].Clear();
-            elemstore[it].~T();
+//            elemstore[it].~T(); // clear below calls the destructors
         }
         freelist.clear();
         elemidx.clear();
