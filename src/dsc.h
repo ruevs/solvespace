@@ -384,22 +384,139 @@ struct CompareId {
 
     bool operator()(int lhs, T const& rhs) const {
 //        return idlist->elemstore[idlist->elemidx[lhs]].h.v < rhs.h.v;
-        return idlist->elemstore[lhs].first.h.v < rhs.h.v;
+        return idlist->elemstore[lhs].h.v < rhs.h.v;
     }
     bool operator()(int lhs, H rhs) const {
 //        return idlist->elemstore[idlist->elemidx[lhs]].h.v < rhs.v;
-        return idlist->elemstore[lhs].first.h.v < rhs.v;
+        return idlist->elemstore[lhs].h.v < rhs.v;
     }
 /*    bool operator()(T *lhs, T const *rhs) const {
         return lhs->h.v < rhs->h.v;
     }*/
     bool operator()(T *lhs, int rhs) const {
 //        return lhs->h.v < idlist->elemstore[idlist->elemidx[rhs]].h.v;
-        return lhs->h.v < idlist->elemstore[rhs].first.h.v;
+        return lhs->h.v < idlist->elemstore[rhs].h.v;
     }
 
 private:
     const IdList<T, H> *idlist;
+};
+
+
+template<typename T, typename H>
+class IdListIterator { // an iterator for the list
+    friend class IdList<T, H>;
+
+public:
+    T& operator*() const noexcept {
+        ssassert(0 == isInBounds(), "Dereferencing out of bounds iterator");
+        return *elem;
+    }
+    const T* operator->() const noexcept {
+        ssassert(0 == isInBounds(), "Dereferencing out of bounds iterator");
+        return &(list->elemstore[list->elemidx[position]]);
+        return elem;
+    }
+
+    T& operator=(const T& e) const noexcept {
+        ssassert(0 == isInBounds(), "Assigning to out of bounds iterator");
+        *elem = e;
+        return *this;
+    }
+
+    T &operator=(const H h) const noexcept {
+        ssassert(0 == isInBounds(), "Assigning to out of bounds iterator");
+        elem->h = e;
+        return *this;
+    }
+
+    bool operator==(const IdListIterator &p) const {
+        ssassert(list == p.list, "Comparison of iterators of different lists");
+        if(isInBounds() && p.isInBounds())
+            return p.position == position;
+        else
+            return p.outOfBounds == outOfBounds;
+    }
+    bool operator<(const IdListIterator &p) const {
+        ssassert(list == p.list, "Comparison of iterators of different lists");
+        if(p.isInBounds()) {
+            if(!isInBounds())
+                return outOfBounds < 0; // < if we are out of bounds at the beginning
+            return position < p.position;
+        } else if(isInBounds()) {
+            return 0 < p.outOfBounds; // < if compared iterator is out of bounds at the end
+        } else {                      // both iterators are before or after their beginnings or ends
+            return outOfBounds < p.outOfBounds;
+        }
+    }
+    bool operator!=(const IdListIterator &p) const {
+        return !operator==(p);
+    }
+    bool operator>(const IdListIterator &p) const {
+        return operator!=(p) && !operator<(p);
+    }
+    bool operator>=(const IdListIterator &p) const {
+        return !operator<(p);
+    }
+    bool operator<=(const IdListIterator &p) const {
+        return !operator>(p);
+    }
+
+    IdListIterator &operator++() {
+        if(isInBounds()) {
+            ++position;
+            if(position == list->elemidx.size()) {
+                outOfBounds = 1;
+                elem        = nullptr; // PAR@@@@ Remove just debugging
+            } else {
+                elem = &(list->elemstore[list->elemidx[position]]);
+            }
+        } else {
+            outOfBounds++;
+        }
+        return *this;
+    }
+    IdListIterator &operator--() {
+        if(isInBounds()) {
+            if(position == 0) { // move one backwards out-of-bounds
+                outOfBounds = -1;
+                elem        = nullptr; // PAR@@@@ Remove just debugging
+            } else {
+                --position;
+                elem = &(list->elemstore[list->elemidx[position]]);
+            }
+        } else {
+            outOfBounds--;
+            if(outOfBounds == 0) {
+                // iterator was at end (+1)
+                position = list->elemidx.size() - 1;
+                elem     = &(list->elemstore[list->elemidx[position]]);
+            }
+        }
+        return *this;
+    }
+    bool isInBounds() const {
+        return outOfBounds == 0;
+    }
+
+    // The constructors are private so only IdList can create iterators.
+    IdListIterator(const IdList<T, H> *l) : list(l), outOfBounds(0) {
+        position = 0;
+        elem     = &(list->elemstore[list->elemidx[position]]);
+    };
+    IdListIterator(const IdListIterator<T, H> &iter)
+        : list(iter.list), outOfBounds(iter.outOfBounds), position(iter.position),
+          elem(iter.elem){};
+    IdListIterator(const IdList<T, H> *l, int pos, int relToBounds = 0)
+        : list(l), position(pos), outOfBounds(relToBounds) {
+        elem = &((list->elemstore)[list->elemidx[position]]);
+    };
+
+private:
+    int position;
+    T *elem;
+    const IdList<T, H> *list; // pointer to the list
+    int outOfBounds;          // before the beginning (-1) or after the end (+1), else 0
 };
 
 // A list, where each element has an integer identifier. The list is kept
@@ -407,7 +524,9 @@ private:
 // id.
 template <class T, class H>
 class IdList {
-    std::vector<std::pair<T, int>> elemstore;
+    friend class IdListIterator<T, H>;
+
+    std::vector<T> elemstore;
     std::vector<int> elemidx;
     std::vector<int> freelist;
 public:
@@ -415,6 +534,7 @@ public:
 
     friend struct CompareId<T, H>;
     using Compare = CompareId<T, H>;
+    using iterator = IdListIterator<T, H>;
 
     bool IsEmpty() const {
         return n == 0;
@@ -432,9 +552,8 @@ public:
         t->h.v = (MaximumId() + 1);
 
         // Copy-construct at the end of the list.
-        elemstore.push_back(std::make_pair(*t, 0));
+        elemstore.push_back(*t);
         elemidx.push_back(elemstore.size()-1);
-        elemstore.back().second = elemidx.back()-1;
 
         ++n;
 
@@ -486,18 +605,14 @@ public:
         auto pos = std::lower_bound(elemidx.begin(), elemidx.end(), *t, Compare(this));
 
         if(freelist.empty()) { // Add a new element to the store
-            elemstore.push_back(std::make_pair(*t, 0));
+            elemstore.push_back(*t);
             // Insert a pointer to the element at the correct position
             if(elemidx.empty()) {
                 // The list is empty so pos, begin and end are all null.
                 // insert does not work in this case.
                 elemidx.push_back(elemstore.size()-1);
-                // Set the value pointing back to the element index
-                elemstore.back().second = 0;
             } else {
                 elemidx.insert(pos, elemstore.size() - 1);
-                // Set the value pointing back to the element index
-                elemstore.back().second = std::distance(elemidx.begin(), pos);
             }
         } else { // Use the last element from the freelist
             // Insert an index to the element at the correct position
@@ -506,8 +621,7 @@ public:
             freelist.pop_back();
 
             // Copy-construct to the element storage.
-            elemstore[*pos].first = T(*t);
-            elemstore[*pos].second = std::distance(elemidx.begin(), pos);
+            elemstore[*pos] = T(*t);
             //            *elemptr[pos] = *t;   // PAR@@@@@@ maybe this?
         }
 
@@ -542,20 +656,20 @@ public:
         if(it == elemidx.end()) {
             return nullptr;
         } else {
-            if((elemstore[*it]).first.h.v != h.v) {
+            if(elemstore[*it].h.v != h.v) {
                 dbp("lower_bound failed in FindByIdNoOops!?");
                 return nullptr;
             }
             //            ssassert((*it)->h.v == h.v, "lower_bound failed in FindByIdNoOops!?"); // PAR@@@@@ this should not be possible - remove
-            return &(elemstore[*it].first);
+            return &elemstore[*it];
         }
     }
 
     T *First() {
-        return begin();
+        return &(*begin());
     }
     T *Last() {
-        return end();
+        return &(*end());
     }
 
     // Remove this entirely?!? 199 places in the code mostly for loops?
@@ -569,21 +683,21 @@ public:
         if(it == elemidx.end()) {
             return nullptr;
         } else {
-            return &elemstore[*it].first;
+            return &elemstore[*it];
         }
     }
 
-    T &Get(size_t i) { return elemstore[elemidx[i]].first; }
-    T const &Get(size_t i) const { return elemstore[elemidx[i]].first; }
+    T &Get(size_t i) { return elemstore[elemidx[i]]; }
+    T const &Get(size_t i) const { return elemstore[elemidx[i]]; }
     T &operator[](size_t i) { return Get(i); }
     T const &operator[](size_t i) const { return Get(i); }
 
-    T *begin() { return IsEmpty() ? nullptr : &elemstore[elemidx.front()].first; }
-    T *end() { return IsEmpty() ? nullptr : &elemstore[elemidx.back()].first; }
-    const T *begin() const { return IsEmpty() ? nullptr : &elemstore[elemidx.front()].first; }
-    const T *end() const { return IsEmpty() ? nullptr : &elemstore[elemidx.back()].first; }
-    const T *cbegin() const { return begin(); }
-    const T *cend() const { return end(); }
+    iterator begin() { return IsEmpty() ? nullptr : iterator(this); }
+    iterator end() { return IsEmpty() ? nullptr : iterator(this, elemidx.size()); }
+    const iterator begin() const { return IsEmpty() ? nullptr : iterator(this); }
+    const iterator end() const { return IsEmpty() ? nullptr : iterator(this, elemidx.size()); }
+    const iterator cbegin() const { return begin(); }
+    const iterator cend() const { return end(); }
 
     void ClearTags() {
         for(auto &elt : *this) { elt.tag = 0; }
@@ -600,10 +714,10 @@ public:
         int src, dest;
         dest = 0;
         for(src = 0; src < n; src++) {
-            if(elemstore[elemidx[src]].first.tag) {
+            if(elemstore[elemidx[src]].tag) {
                 // this item should be deleted
-                elemstore[elemidx[src]].first.Clear();
-                elemstore[elemidx[src]].first.~T();
+                elemstore[elemidx[src]].Clear();
+                elemstore[elemidx[src]].~T();
                 freelist.push_back(elemidx[src]);
                 elemidx[src] = 0xDEADBEEF; // PAR@@@@@ just for debugging, not needed, remove later
             } else {
@@ -666,8 +780,8 @@ public:
 
     void Clear() {
         for(auto &it : elemidx) {
-            elemstore[it].first.Clear();
-            elemstore[it].first.~T();
+            elemstore[it].Clear();
+            elemstore[it].~T();
         }
         freelist.clear();
         elemidx.clear();
