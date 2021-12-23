@@ -894,6 +894,35 @@ void GraphicsWindow::Paint() {
     UiCanvas uiCanvas = {};
     uiCanvas.canvas = canvas;
 
+#if 1
+    // Draw the bboxes
+    for(Entity &e : SK.entity) {
+        /* if(e.group != SS.GW.activeGroup)
+            continue;*/
+        if(e.IsFace() || e.IsDistance())
+            continue;
+        if(!e.IsVisible())
+            continue;
+        bool entityHasBBox;
+        BBox entityBBox = e.GetOrGenerateScreenBBox(&entityHasBBox);
+        if(entityHasBBox) {
+            uiCanvas.DrawRect((int)(entityBBox.minp.x - 1) + (int)camera.width / 2,
+                              (int)(entityBBox.maxp.x + 1) + (int)camera.width / 2,
+                              (int)(entityBBox.minp.y - 1) + (int)camera.height / 2,
+                              (int)(entityBBox.maxp.y + 1) + (int)camera.height / 2,
+                              /*fillColor=*/Style::Color(Style::HOVERED).WithAlpha(5),
+                              /*outlineColor=*/Style::Color(Style::HOVERED));
+            uiCanvas.DrawBitmapText("Hello", 50, 50, Style::Color(Style::HOVERED), 0);
+            uiCanvas.DrawBitmapText(
+                e.DescriptionString(),
+                (int)(entityBBox.minp.x + entityBBox.maxp.x) / 2 + (int)camera.width / 2,
+                (int)(entityBBox.minp.y + entityBBox.maxp.y) / 2 + (int)camera.height / 2,
+                Style::Color(Style::HOVERED), 0);
+            
+        }
+    }
+#endif
+
     // If a marquee selection is in progress, then draw the selection
     // rectangle, as an outline and a transparent fill.
     if(pending.operation == Pending::DRAGGING_MARQUEE) {
