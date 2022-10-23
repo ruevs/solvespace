@@ -215,13 +215,14 @@ void SEdgeList::Clear() {
     l.Clear();
 }
 
-void SEdgeList::AddEdge(Vector a, Vector b, int auxA, int auxB, int tag) {
+void SEdgeList::AddEdge(Vector a, Vector b, int auxA, int auxB, int tag, uint32_t cc) {
     SEdge e = {};
     e.tag = tag;
     e.a = a;
     e.b = b;
     e.auxA = auxA;
     e.auxB = auxB;
+    e.cc = cc;
     l.Add(&e);
 }
 
