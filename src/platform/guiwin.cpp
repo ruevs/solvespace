@@ -1701,6 +1701,16 @@ std::vector<std::string> InitGui(int argc, char **argv) {
         SetLocale("en_US");
     }
 
+#ifndef NDEBUG
+    // create a debug console
+    if(AllocConsole()) {
+        (void)freopen("CONOUT$", "w", stdout/*stderr*/);
+        SetConsoleTitle(L"Debug Console");
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+                                FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+    }
+#endif
+
     return args;
 }
 
