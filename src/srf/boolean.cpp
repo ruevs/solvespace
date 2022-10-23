@@ -9,6 +9,9 @@
 namespace SolveSpace {
 
 static int I;
+#ifndef NDEBUG
+    static uint32_t origKept = 0, interKept = 0;
+#endif
 
 void SShell::MakeFromUnionOf(SShell *a, SShell *b) {
     MakeFromBoolean(a, b, SSurface::CombineAs::UNION);
@@ -235,7 +238,7 @@ void SSurface::TrimFromEdgeList(SEdgeList *el, bool asUv) {
         stb.start = se->a;
         stb.finish = se->b;
         stb.curve.v = se->auxA;
-        stb.backwards = se->auxB ? true : false;
+        stb.backwards = se->auxB ? true : false;    // ruevs: reverse here? No?
 
         // Find adjoining edges from the same curve; those should be
         // merged into a single trim.
@@ -274,12 +277,13 @@ static bool KeepRegion(SSurface::CombineAs type, bool opA, SShell::Class shell, 
 {
     bool inShell = (shell == SShell::Class::SURF_INSIDE),
          outSide = (shell == SShell::Class::SURF_OUTSIDE),
+// PAR@@ for history :-)         inSame = (shell == SShell::Class::COINC_SAME) /* || (shell == SShell::Class::COINC_OPP)*/,
          coincSame  = (shell == SShell::Class::SURF_COINC_SAME),
          coincOpp  = (shell == SShell::Class::SURF_COINC_OPP),
          inOrig  = (orig == SShell::Class::SURF_INSIDE);
 
     // This one line is not really part of this functions logic
-    if(!inOrig) return false;
+    if(!inOrig /* || ((SSurface::CombineAs::DIFFERENCE == type) && !outSide)*/) return false;
 
     switch(type) {
         case SSurface::CombineAs::UNION:
@@ -310,8 +314,120 @@ static bool KeepEdge(SSurface::CombineAs type, bool opA,
                      SShell::Class indir_shell, SShell::Class outdir_shell,
                      SShell::Class indir_orig, SShell::Class outdir_orig)
 {
+//    return true;
+/*
+    INSIDE     = 100,
+    OUTSIDE    = 200,
+    COINC_SAME = 300,
+    COINC_OPP  = 400
+*/
+    uint32_t cc = (uint32_t)indir_shell*10 + (uint32_t)outdir_shell + (uint32_t)indir_orig/10 + (uint32_t)outdir_orig/100;
+    bool result;
+    bool resultsmart;
+
     bool keepIn  = KeepRegion(type, opA, indir_shell,  indir_orig),
          keepOut = KeepRegion(type, opA, outdir_shell, outdir_orig);
+
+    result = (keepIn && !keepOut);
+    result = 1;
+    switch (type) {
+        case SSurface::CombineAs::UNION:
+            resultsmart = ((SShell::Class::SURF_INSIDE==indir_orig) && (
+                              (SShell::Class::SURF_OUTSIDE==indir_shell) ||
+                              ((!opA) && (
+                                 (SShell::Class::SURF_COINC_SAME==indir_shell)
+                               )
+                          ))) &&
+                          (!((SShell::Class::SURF_INSIDE==outdir_orig) && (
+                              (SShell::Class::SURF_OUTSIDE==outdir_shell) ||
+                              ((!opA) && (
+                                 (SShell::Class::SURF_COINC_SAME==outdir_shell)
+                               )
+                          ))));
+            break;
+
+        case SSurface::CombineAs::DIFFERENCE:
+            resultsmart = (1112 == cc) ||                 // Internal
+                     (1211 == cc) ||
+                     (2111 == cc) || // X intersections
+                     (2311 == cc) ||
+                     (2312 == cc) ||
+                     (2411 == cc) ||
+                     (4111 == cc) || // X with one side face on face opposite normals
+                     (3112 == cc) ||
+                     (3211 == cc) ||
+                     ((!opA) &&      // Edges which should be kept only from one shell
+                      ((3212 == cc) ||
+                       (1212 == cc) || // Face on face same normal
+//                       (4412 == cc) || // Visual 2022-10-15
+                       (3312 == cc))
+                     )            ||
+                     ((opA) &&      // Edges which should be kept only from one shell
+                      ((2112 == cc) || // opA?
+                       (3311 == cc) || // Visual 2022-10-15 WIP #1291 #1298
+                       (4411 == cc) || // Visual 2022-10-15 WIP #1291 #1298
+                       (2212 == cc))
+                     );
+
+
+/*            resultsmart = (SShell::Class::OUTSIDE==indir_shell) ||                                                                                  // 1112 1212
+                          ((!opA) && (
+                             (SShell::Class::INSIDE==indir_shell) ||
+                             (SShell::Class::COINC_SAME==indir_shell)
+                           )
+                          );*/
+            break;
+
+        case SSurface::CombineAs::INTERSECTION:
+            // "Stupid" decision derived by a lot of debugging
+            resultsmart = (1112 == cc) || // Internal
+                     (1211 == cc) ||  // ??? visual
+                     (1212 == cc) || // Face on face same normal
+                     (1311 == cc) || // ??? visual
+                     (1411 == cc) || // ??? visual
+                     (2111 == cc) ||    // X intersections
+                     (2311 == cc) || // Face on face same normal
+                     (3111 == cc) || // from smart ;-)
+                     (3211 == cc) || // ??? visual
+                     (4111 == cc) || // X with one side face on face opposite normals
+                     ((!opA) &&      // Edges which should be kept only from one shell
+                       ( (3312 == cc) || 
+                         (3212 == cc) /*|| // ??? visual
+                         (2321 == cc)    // Edge on edge*/
+                       )
+                     );
+
+            /*
+            // "Smart" decision derived from the above with a Karnaugh map (and the above updated in reverse later :-)
+            resultsmart = (SShell::Class::INSIDE==indir_shell) ||                                                                                 // 1112 1212
+                          ((SShell::Class::INSIDE==outdir_shell)&&(SShell::Class::INSIDE==indir_orig)&&(SShell::Class::INSIDE==outdir_orig)) ||   // 2111 3111 4111
+                          ((!opA) && (
+                             ((SShell::Class::COINC_SAME==indir_shell)&&(SShell::Class::COINC_SAME==outdir_shell))||                              // 3312
+                             ((SShell::Class::COINC_SAME==outdir_shell)&&(SShell::Class::INSIDE==outdir_orig))                                    // 2311 2321
+                           )
+                          );
+            */
+    /*
+         2121 is the same as 1212 keep only one
+         3212 is the same as 2321 keep only one
+         ((3112 == cc) || (3132 == cc) || (2313 == cc) )   // No
+         2312 3312 4212 2421 // Face on Face opposite normals, coplanar opposite do NOT include
+         2411 2112 4412 // Face on Face opposite normals, concave opposite do NOT include
+    */
+            break;
+
+        default: ssassert(false, "Unexpected combine type");
+    }
+
+// Test values here
+//    result = (2321 == cc);
+//    result = result && !opA;
+
+#ifndef NDEBUG
+    dbp("I: %d opA: %d  cc: %d %d %s", I, opA, cc, result, (result!=resultsmart)?"NOOOOOOOOOOOOOOOOOO":"");
+#endif
+ //   return result;
+    return resultsmart;
 
     // If the regions to the left and right of this edge are both in or both
     // out, then this edge is not useful and should be discarded.
@@ -350,7 +466,7 @@ static void TagByClassifiedEdge(SBspUv::Class bspclass, SShell::Class *indir, SS
     }
 }
 
-static void DEBUGEDGELIST(SEdgeList *sel, SSurface *surf) {
+void DEBUGEDGELIST(SEdgeList *sel, SSurface *surf) {
     dbp("print %d edges", sel->l.n);
     SEdge *se;
     for(se = sel->l.First(); se; se = sel->l.NextAfter(se)) {
@@ -358,13 +474,13 @@ static void DEBUGEDGELIST(SEdgeList *sel, SSurface *surf) {
         Vector arrow = (se->b).Minus(se->a);
         swap(arrow.x, arrow.y);
         arrow.x *= -1;
-        arrow = arrow.WithMagnitude(0.01);
+        arrow = arrow.WithMagnitude(0.05);
         arrow = arrow.Plus(mid);
 
         SS.nakedEdges.AddEdge(surf->PointAt(se->a.x, se->a.y),
                               surf->PointAt(se->b.x, se->b.y));
         SS.nakedEdges.AddEdge(surf->PointAt(mid.x, mid.y),
-                              surf->PointAt(arrow.x, arrow.y));
+                              surf->PointAt(arrow.x, arrow.y), se->auxA, se->auxB, se->tag,se->cc);
     }
 }
 
@@ -481,6 +597,59 @@ void SSurface::EdgeNormalsWithinSurface(Point2d auv, Point2d buv,
 //    *enout = enxyz;
 }
 
+
+static uint32_t  DebugEdgeClassification(Vector pt, bool opA, SShell::Class indir_shell,
+                     SShell::Class outdir_shell, SShell::Class indir_orig,
+                     SShell::Class outdir_orig) {
+    uint32_t cc = (uint32_t)indir_shell * 100 + (uint32_t)outdir_shell*10 + (uint32_t)indir_orig*1 +
+                  (uint32_t)outdir_orig / 10 + (uint32_t)opA;
+
+/*    std::shared_ptr<SolveSpace::ViewportCanvas> canvas = SS.GW.canvas;
+
+    const Camera &camera = canvas->GetCamera();
+
+    Canvas::Stroke strokeError = Style::Stroke(Style::DRAW_ERROR);
+    strokeError.layer          = Canvas::Layer::FRONT;
+    strokeError.width          = 1.0f;
+    Canvas::hStroke hcsError   = canvas->GetStroke(strokeError);
+
+    double textHeight = Style::DefaultTextHeight() / camera.scale;
+
+    canvas->DrawVectorText(ssprintf("%lu", cc), textHeight*10,
+                           pt, camera.projRight, camera.projUp, hcsError); */
+    return cc;
+}
+static void DumpEdgeClassificationVennDiagram() {
+    static bool once = true;
+    if(once) {
+        once = false;
+        for(int boolop = 10; boolop <=12; ++boolop) {
+            for(int opA = 0; opA < 2; ++opA) {
+                printf("Boolean: %i, opA: %i\r\n", boolop, opA);
+                printf("  , 11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34, 41, 42, 43, 44\r\n");
+                for(int IO = 1; IO <= 4; ++IO) {
+                    for(int OO = 1; OO <= 4; ++OO) {
+                        printf("%i%i, ", IO, OO);
+                        for(int IS = 1; IS <= 4; ++IS) {
+                            for(int OS = 1; OS <= 4; ++OS) {
+                                // printf("%4u, ", DebugEdgeClassification({}, opA, IS, OS, IO, OO));
+                                printf("%s   ",
+                                       (KeepEdge((SolveSpace::SSurface::CombineAs)boolop, opA,
+                                                 (SolveSpace::SShell::Class)(IS * 100),
+                                                 (SolveSpace::SShell::Class)(OS * 100),
+                                                 (SolveSpace::SShell::Class)(IO * 100),
+                                                 (SolveSpace::SShell::Class)(OO * 100)))
+                                           ? "*"
+                                           : " ");
+                            }
+                        }
+                        printf("\r\n");
+                    }
+                }
+            }
+        }
+    }
+}
 //-----------------------------------------------------------------------------
 // Trim this surface against the specified shell, in the way that's appropriate
 // for the specified Boolean operation type (and which operand we are). We
@@ -626,11 +795,16 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
                             ret.PointAt(auv), ret.PointAt(buv), pt,
                             enin, enout, surfn);
 
+        uint32_t cc = DebugEdgeClassification(se->a, opA, indir_shell, outdir_shell, indir_orig, outdir_orig);
+
         if(KeepEdge(type, opA, indir_shell, outdir_shell,
                                indir_orig,  outdir_orig))
         {
+#ifndef NDEBUG
+            origKept++;
+#endif
             for(se = chain.l.First(); se; se = chain.l.NextAfter(se)) {
-                final.AddEdge(se->a, se->b, se->auxA, se->auxB);
+                final.AddEdge(se->a, se->b, se->auxA, se->auxB, 0, cc);
             }
         }
         chain.Clear();
@@ -659,33 +833,52 @@ SSurface SSurface::MakeCopyTrimAgainst(SShell *parent,
                             ret.PointAt(auv), ret.PointAt(buv), pt,
                             enin, enout, surfn);
 
+        uint32_t cc = DebugEdgeClassification(se->a, opA, indir_shell, outdir_shell, indir_orig, outdir_orig);
+
         if(KeepEdge(type, opA, indir_shell, outdir_shell,
                                indir_orig,  outdir_orig))
         {
+#ifndef NDEBUG
+            interKept++;
+#endif
             for(se = chain.l.First(); se; se = chain.l.NextAfter(se)) {
-                final.AddEdge(se->a, se->b, se->auxA, se->auxB);
+//                se->auxB = 1;   // ruevs: Will cause the TrimFromEdgeList function below to reverse edges resulting from the intersection.
+                final.AddEdge(se->a, se->b, se->auxA, se->auxB, 0, cc);	// ruevs: swap a and b here?
             }
         }
         chain.Clear();
     }
 
+#ifndef NDEBUG
+    dbp("type: %d origKept: %d interKept %d", type, origKept, interKept);
+#endif
+
+    DumpEdgeClassificationVennDiagram();
+
     // Cull extraneous edges; duplicates or anti-parallel pairs. In particular,
     // we can get duplicate edges if our surface intersects the other shell
     // at an edge, so that both surfaces intersect coincident (and both
     // generate an intersection edge).
-    final.CullExtraneousEdges(/*both=*/true);
+    final.CullExtraneousEdges(/*both=*/false);   // ruevs: cull flase? Or wrong choice of edges?
+
+#ifndef NDEBUG
+    dbp("Total %d, left after culling: %d", origKept + interKept, final.l.n);
+#endif
 
     // Use our reassembled edges to trim the new surface.
     ret.TrimFromEdgeList(&final, /*asUv=*/true);
 
     SPolygon poly = {};
     final.l.ClearTags();
-    if(!final.AssemblePolygon(&poly, NULL, /*keepDir=*/true))
+    DEBUGEDGELIST(&final, &ret);
+    SEdge errorAt;
+    if(!final.AssemblePolygon(&poly, &errorAt, /*keepDir=*/true))    // ruevs: passing false is a hack according to jwesthues https://github.com/solvespace/solvespace/issues/35#issuecomment-531173543
 #pragma omp critical
     {
         into->booleanFailed = true;
         dbp("failed: I=%d, avoid=%d", I+dbg_index, choosing.l.n);
-        DEBUGEDGELIST(&final, &ret);
+        SS.nakedEdges.AddEdge(errorAt.a, errorAt.b, 0, 0, 0, 8888888);
+        //        DEBUGEDGELIST(&final, &ret);
     }
     poly.Clear();
 
@@ -829,8 +1022,16 @@ void SShell::MakeFromBoolean(SShell *a, SShell *b, SSurface::CombineAs type) {
 
     if(b->surface.IsEmpty() || a->surface.IsEmpty()) {
         I = 1000000;
+#ifndef NDEBUG
+        origKept  = 1000000;
+        interKept = 1000000;
+#endif
     } else {
         I = 0;
+#ifndef NDEBUG
+        origKept = 0;
+        interKept = 0;
+#endif
     }
     // Then trim and copy the surfaces
     a->CopySurfacesTrimAgainst(a, b, this, type);
@@ -1012,7 +1213,7 @@ SBspUv::Class SBspUv::ClassifyPoint(Point2d p, Point2d eb, SSurface *srf) const 
         // Pick arbitrarily which side to send it down, doesn't matter
         Class c1 =  neg ? neg->ClassifyPoint(p, eb, srf) : Class::OUTSIDE;
         Class c2 =  pos ? pos->ClassifyPoint(p, eb, srf) : Class::INSIDE;
-        if(c1 != c2) {
+        if(c1 != c2) {  //ruevs
             dbp("MISMATCH: %d %d %08x %08x", c1, c2, neg, pos);
         }
         return c1;
@@ -1029,7 +1230,7 @@ SBspUv::Class SBspUv::ClassifyEdge(Point2d ea, Point2d eb, SSurface *srf) const 
         // Perhaps the edge is tangent at its midpoint (and we screwed up
         // somewhere earlier and failed to split it); try a different
         // point on the edge.
-        ret = ClassifyPoint(ea.Plus((eb.Minus(ea)).ScaledBy(0.294)), eb, srf);
+        ret = ClassifyPoint(ea.Plus((eb.Minus(ea)).ScaledBy(0.294)), eb, srf);  // ruevs: BP here
     }
     return ret;
 }

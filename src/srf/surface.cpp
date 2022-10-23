@@ -417,7 +417,8 @@ void SSurface::TriangulateInto(SShell *shell, SMesh *sm) {
     MakeEdgesInto(shell, &el, MakeAs::UV);
 
     SPolygon poly = {};
-    if(el.AssemblePolygon(&poly, NULL, /*keepDir=*/true)) {
+    SEdge errorAt;
+    if(el.AssemblePolygon(&poly, &errorAt, /*keepDir=*/true)) {    // ruevs: passing false is a hack according to jwesthues https://github.com/solvespace/solvespace/issues/35#issuecomment-531173543
         int i, start = sm->l.n;
         if(degm == 1 && degn == 1) {
             // A surface with curvature along one direction only; so
@@ -450,6 +451,7 @@ void SSurface::TriangulateInto(SShell *shell, SMesh *sm) {
             st->FlipNormal();
         }
     } else {
+        SS.nakedEdges.AddEdge(errorAt.a, errorAt.b, 0, 0, 0, 9999999);
         dbp("failed to assemble polygon to trim nurbs surface in uv space");
     }
 
