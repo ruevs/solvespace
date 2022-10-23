@@ -476,9 +476,28 @@ void OpenGl1Renderer::DrawLine(const Vector &a, const Vector &b, hStroke hcs) {
 
 void OpenGl1Renderer::DrawEdges(const SEdgeList &el, hStroke hcs) {
     double phase = 0.0;
+    unsigned n        = 0; 
     for(const SEdge *e = el.l.First(); e; e = el.l.NextAfter(e)) {
         DoStippledLine(e->a, e->b, hcs, phase);
         phase += e->a.Minus(e->b).Magnitude();
+
+        /*debug*/
+        if(0 != e->cc) {
+            std::shared_ptr<SolveSpace::ViewportCanvas> canvas = SS.GW.canvas;
+
+            const Camera &camera = canvas->GetCamera();
+
+            Canvas::Stroke strokeError = Style::Stroke(Style::DRAW_ERROR);
+            strokeError.layer          = Canvas::Layer::FRONT;
+            strokeError.width          = 1.0f;
+            Canvas::hStroke hcsError   = canvas->GetStroke(strokeError);
+
+            double textHeight = Style::DefaultTextHeight()*8 / camera.scale;
+
+            DrawVectorText(ssprintf(" %03u-%lu-%i-%i", n, e->cc, e->auxA, e->auxB ), textHeight + textHeight*n/1000, e->a,
+                           camera.projRight, camera.projUp, hcsError);
+            ++n;
+        }
     }
 }
 

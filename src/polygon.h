@@ -49,6 +49,7 @@ enum class EdgeKind : uint32_t {
 class SEdge {
 public:
     int    tag;
+    uint32_t cc;
     int    auxA, auxB;
     Vector a, b;
 
@@ -61,7 +62,7 @@ public:
     List<SEdge>     l;
 
     void Clear();
-    void AddEdge(Vector a, Vector b, int auxA=0, int auxB=0, int tag=0);
+    void AddEdge(Vector a, Vector b, int auxA=0, int auxB=0, int tag=0, uint32_t cc=0);
     bool AssemblePolygon(SPolygon *dest, SEdge *errorAt, bool keepDir=false) const;
     bool AssembleContour(Vector first, Vector last, SContour *dest,
                             SEdge *errorAt, bool keepDir, int start) const;
