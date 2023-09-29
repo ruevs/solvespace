@@ -28,14 +28,12 @@ target_include_directories(slvs_deps SYSTEM INTERFACE
     ${ZLIB_INCLUDE_DIR}
     ${PNG_PNG_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
-    ${MIMALLOC_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIRS})
 target_link_libraries(slvs_deps INTERFACE
     dxfrw
     ${ZLIB_LIBRARY}
     ${PNG_LIBRARY}
-    ${FREETYPE_LIBRARY}
-    mimalloc-static)
+    ${FREETYPE_LIBRARY})
 
 if(NOT USE_QT_GUI OR ENABLE_CLI)
     target_include_directories(slvs_deps SYSTEM INTERFACE ${CAIRO_INCLUDE_DIRS})
