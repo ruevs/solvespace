@@ -28,4 +28,4 @@
 	url = https://gitlab.com/libeigen/eigen.git
 [submodule "extlib/libspnavdev"]
 	path = extlib/libspnavdev
-	url = https://github.com/rpavlik/libspnavdev.git
+	url = https://github.com/ruevs/libspnavdev.git
