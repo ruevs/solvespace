@@ -35,11 +35,11 @@ static double transformIndex(union spndev_event const& ev,
     if(axisData.spnavdevIndex < 0) {
         return 0;
     }
-    return double(ev.mot.v[axisData.spnavdevIndex]);
+    return double(ev.mot.v[axisData.spnavdevIndex])*axisData.scale;
 }
 bool NavDeviceWrapper::process(SolveSpace::Platform::SixDofEvent& event) {
     using SolveSpace::Platform::SixDofEvent;
-    union spndev_event ev;
+    union spndev_event ev = {};
     if(0 == spndev_process(dev, &ev)) {
         return false;
     }
@@ -55,9 +55,9 @@ bool NavDeviceWrapper::process(SolveSpace::Platform::SixDofEvent& event) {
         event.translationX = transformIndex(ev, axes[0]);
         event.translationY = transformIndex(ev, axes[1]);
         event.translationZ = transformIndex(ev, axes[2]);
-        event.rotationX    = transformIndex(ev, axes[3]) * 0.001;
-        event.rotationY    = transformIndex(ev, axes[4]) * 0.001;
-        event.rotationZ    = transformIndex(ev, axes[5]) * 0.001;
+        event.rotationX    = transformIndex(ev, axes[3]);
+        event.rotationY    = transformIndex(ev, axes[4]);
+        event.rotationZ    = transformIndex(ev, axes[5]);
         return true;
     case SPNDEV_BUTTON: {
         if(ev.bn.num >= buttons.size()) {
@@ -93,18 +93,57 @@ bool NavDeviceWrapper::process(SolveSpace::Platform::SixDofEvent& event) {
 }
 
 void NavDeviceWrapper::populateAxes() {
+    // This array remaps the axis and their directions/scaling, so that they match what the standard
+    // 3Dconnexion driver outputs. In this way SolveSpace will control the object "properly". The
+    // array may not be requiered if it turns out that all devices use the same axis orientation and
+    // have similar sensitivities, but it is better if we test them. The ones that are already
+    // tested and working are marked.
+    // See also: https://github.com/FreeSpacenav/spacenavd/blob/master/src/dev.c#L38
+    const struct {
+        const std::wstring name;
+        const std::string axis_names[6];
+        const double axis_scale[6];
+    } axisRemap[] = {
+        {L"SpaceMouse Plus XT USB" ,          {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"CadMan USB",                       {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},   // Tested
+        {L"SpaceMouse Classic USB",           {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceBall 5000 USB",               {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},   // Tested
+        {L"SpaceTraveler USB",                {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},   // Tested
+        {L"SpacePilot",                       {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},   // Tested
+        {L"SpaceNavigator",                   {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},   // Tested
+        {L"SpaceExplorer",                    {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},   // Tested
+        {L"SpaceNavigator for Notebooks",     {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpacePilot Pro",                   {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Pro",                   {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"NuLOOQ",                           {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"LIPARI",                           {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Wireless (cabled)",     {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Wireless Receiver",     {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Pro Wireless (cabled)", {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Pro Wireless Receiver", {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Enterprise",            {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Compact",               {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Module",                {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+        {L"SpaceMouse Universal Receiver",    {"Tx", "Tz", "Ty", "Rx", "Rz", "Ry"}, {1.0, 1.0, -1.0, .001, .001, -.001}},
+    };
+
     using std::begin;
     using std::end;
-    const std::string axis_names[] = {"Tx", "Ty", "Tz", "Rx", "Ry", "Rz"};
-    const auto b                   = begin(axis_names);
-    const auto e                   = end(axis_names);
-    const auto num_axes            = spndev_num_axes(dev);
-    for(int axis_idx = 0; axis_idx < num_axes; ++axis_idx) {
-        auto axis_name = spndev_axis_name(dev, axis_idx);
-        auto it = std::find_if(b, e, [&](std::string const& name) { return name == axis_name; });
-        if(it != e) {
-            ptrdiff_t remapped_index = std::distance(b, it);
-            axes[remapped_index]     = AxisData{axis_idx};
+
+    auto da = std::find_if(begin(axisRemap), end(axisRemap),
+                           [&](auto const& devaxis) { return devaxis.name == (wchar_t *)spndev_name(dev); });
+
+    if(da != end(axisRemap)) {
+        const auto b        = begin(da->axis_names);
+        const auto e        = end(da->axis_names);
+        const auto num_axes = spndev_num_axes(dev);
+        for(int axis_idx = 0; axis_idx < num_axes; ++axis_idx) {
+            auto axis_name = spndev_axis_name(dev, axis_idx);
+            auto it = std::find_if(b, e, [&](std::string const& name) { return name == axis_name; });
+            if(it != e) {
+                ptrdiff_t remapped_index = std::distance(b, it);
+                axes[remapped_index]     = AxisData{axis_idx, da->axis_scale[axis_idx]};
+            }
         }
     }
 }

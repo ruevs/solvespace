@@ -42,10 +42,11 @@ public:
     };
     struct AxisData {
         AxisData() = default;
-        AxisData(int spnavdevIndex_) : spnavdevIndex(spnavdevIndex_) {
+        AxisData(int spnavdevIndex_, double scale_) : spnavdevIndex(spnavdevIndex_), scale(scale_) {
         }
 
         int spnavdevIndex = -1;
+        double scale = 1.;
     };
 
 private:
