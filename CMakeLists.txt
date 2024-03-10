@@ -47,6 +47,8 @@ project(solvespace
 
 set(ENABLE_GUI        ON CACHE BOOL
     "Whether the graphical interface is enabled")
+set(USE_QT_GUI        OFF CACHE BOOL
+    "Whether the Qt library used to build graphical interface")
 set(ENABLE_CLI        ON CACHE BOOL
     "Whether the command line interface is enabled")
 set(ENABLE_TESTS      ON  CACHE BOOL
@@ -282,6 +284,8 @@ if(ENABLE_GUI OR ENABLE_CLI)
         find_package(ZLIB REQUIRED)
         find_package(PNG REQUIRED)
         find_package(Freetype REQUIRED)
+    endif()
+    if (NOT USE_QT_GUI OR ENABLE_CLI OR ENABLE_TESTS)
         find_package(Cairo REQUIRED)
     endif()
 endif()
@@ -323,9 +327,11 @@ if(ENABLE_GUI)
         find_package(OpenGL REQUIRED)
         find_package(SpaceWare)
         pkg_check_modules(FONTCONFIG REQUIRED fontconfig)
+        if (NOT USE_QT_GUI)
         pkg_check_modules(JSONC REQUIRED json-c)
         pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.18 pangomm-1.4 x11)
     endif()
+endif()
 endif()
 
 # code coverage

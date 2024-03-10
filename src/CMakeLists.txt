@@ -19,6 +19,11 @@ endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
+if(USE_QT_GUI)
+	set(CMAKE_AUTOMOC ON)
+	find_package(Qt5 COMPONENTS Core Gui Widgets OpenGL REQUIRED)
+endif()
+
 # solvespace dependencies
 add_library(slvs_deps INTERFACE)
 target_include_directories(slvs_deps INTERFACE SYSTEM
@@ -26,7 +31,6 @@ target_include_directories(slvs_deps INTERFACE SYSTEM
     ${ZLIB_INCLUDE_DIR}
     ${PNG_PNG_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
-    ${CAIRO_INCLUDE_DIRS}
     ${MIMALLOC_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIRS})
 target_link_libraries(slvs_deps INTERFACE
@@ -34,8 +38,12 @@ target_link_libraries(slvs_deps INTERFACE
     ${ZLIB_LIBRARY}
     ${PNG_LIBRARY}
     ${FREETYPE_LIBRARY}
-    ${CAIRO_LIBRARIES}
     mimalloc-static)
+
+if(NOT USE_QT_GUI OR ENABLE_CLI)
+    target_include_directories(slvs_deps INTERFACE SYSTEM ${CAIRO_INCLUDE_DIRS})
+    target_link_libraries(slvs_deps INTERFACE ${CAIRO_LIBRARIES})
+endif()
 
 if(Backtrace_FOUND)
     target_include_directories(slvs_deps INTERFACE SYSTEM
@@ -327,8 +335,11 @@ endif()
 if(ENABLE_GUI)
     add_executable(solvespace WIN32 MACOSX_BUNDLE
         ${solvespace_core_gl_SOURCES}
-        platform/entrygui.cpp
         $<TARGET_PROPERTY:resources,EXTRA_SOURCES>)
+
+    if(NOT USE_QT_GUI)
+        target_sources(solvespace PRIVATE platform/entrygui.cpp)
+    endif()
 
     add_dependencies(solvespace
         resources)
@@ -417,6 +428,18 @@ if(ENABLE_GUI)
                     ${EXECUTABLE_OUTPUT_PATH}/filemanagerui.js
             COMMENT "Copying UI script filemanagerui.sj"
             VERBATIM)
+    elseif(USE_QT_GUI)
+        target_sources(solvespace PRIVATE
+            platform/guiqt.cpp
+            platform/guiqt.h)
+
+        target_include_directories(solvespace PRIVATE SYSTEM
+            ${FONTCONFIG_INCLUDE_DIRS})
+        target_link_directories(solvespace PRIVATE
+            ${FONTCONFIG_LIBRARY_DIRS})
+        target_link_libraries(solvespace PRIVATE
+            ${FONTCONFIG_LIBRARIES}
+            Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL)
     else()
         target_sources(solvespace PRIVATE
             platform/guigtk.cpp)
@@ -443,6 +466,7 @@ endif()
 
 # solvespace headless library
 
+if(ENABLE_CLI)
 add_library(solvespace-headless STATIC EXCLUDE_FROM_ALL
     ${solvespace_core_gl_SOURCES}
     platform/guinone.cpp
@@ -461,7 +485,6 @@ target_link_libraries(solvespace-headless
 
 # solvespace command-line executable
 
-if(ENABLE_CLI)
     add_executable(solvespace-cli
         platform/entrycli.cpp
         $<TARGET_PROPERTY:resources,EXTRA_SOURCES>)
