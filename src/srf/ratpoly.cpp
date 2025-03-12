@@ -37,7 +37,7 @@ static inline double BernsteinDerivative(int k, int deg, double t) {
 }
 
 Vector SBezier::PointAt(double t) const {
-    Vector pt = Vector::From(0, 0, 0);
+    Vector pt = {0, 0, 0};
     double d = 0;
 
     int i;
@@ -51,7 +51,7 @@ Vector SBezier::PointAt(double t) const {
 }
 
 Vector SBezier::TangentAt(double t) const {
-    Vector pt = Vector::From(0, 0, 0), pt_p = Vector::From(0, 0, 0);
+    Vector pt = {0, 0, 0}, pt_p = {0, 0, 0};
     double d = 0, d_p = 0;
 
     int i;
@@ -311,7 +311,7 @@ Vector SSurface::PointAt(Point2d puv) const {
     return PointAt(puv.x, puv.y);
 }
 Vector SSurface::PointAt(double u, double v) const {
-    Vector num = Vector::From(0, 0, 0);
+    Vector num = {0, 0, 0};
     double den = 0;
 
     int i, j;
@@ -329,9 +329,9 @@ Vector SSurface::PointAt(double u, double v) const {
 }
 
 void SSurface::TangentsAt(double u, double v, Vector *tu, Vector *tv, bool retry) const {
-    Vector num   = Vector::From(0, 0, 0),
-           num_u = Vector::From(0, 0, 0),
-           num_v = Vector::From(0, 0, 0);
+    Vector num   = {0, 0, 0},
+           num_u = {0, 0, 0},
+           num_v = {0, 0, 0};
     double den   = 0,
            den_u = 0,
            den_v = 0;
@@ -362,9 +362,9 @@ void SSurface::TangentsAt(double u, double v, Vector *tu, Vector *tv, bool retry
     *tv = tv->ScaledBy(1.0/(den*den));
     
     // Tangent is zero at sungularities like the north pole. Move away a bit and retry. 
-    if(tv->Equals(Vector::From(0,0,0)) && retry)
+    if(tv->Equals({0, 0, 0}) && retry)
         TangentsAt(u+(0.5-u)*0.00001, v, tu, tv, false);
-    if(tu->Equals(Vector::From(0,0,0)) && retry)
+    if(tu->Equals({0, 0, 0}) && retry)
         TangentsAt(u, v+(0.5-v)*0.00001, tu, tv, false);
 }
 
@@ -465,7 +465,7 @@ void SSurface::ClosestPointTo(Vector p, double *u, double *v, bool mustConverge)
 bool SSurface::ClosestPointNewton(Vector p, double *u, double *v, bool mustConverge) const
 {
     // Initial guess is in u, v; refine by Newton iteration.
-    Vector p0 = Vector::From(0, 0, 0);
+    Vector p0 = {0, 0, 0};
     for(int i = 0; i < (mustConverge ? 25 : 5); i++) {
         p0 = PointAt(*u, *v);
         if(mustConverge) {
