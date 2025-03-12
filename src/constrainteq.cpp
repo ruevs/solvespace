@@ -1023,7 +1023,7 @@ void ConstraintBase::GenerateEquations(IdList<Equation,hEquation> *l,
             } else {
                 // We use expressions written in workplane csys, so we can assume the workplane
                 // normal is (0, 0, 1). We can write the equation as:
-                //   Expr *eq = a.Cross(b).Dot(ExprVector::From(0.0, 0.0, 1.0));
+                //   Expr *eq = a.Cross(b).Dot(Expr{0.0, 0.0, 1.0});
                 // but this will just result in elimination of x and y terms after dot product.
                 // We can only use the z expression:
                 //   Expr *eq = a.Cross(b).z;
