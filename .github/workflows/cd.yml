@@ -15,7 +15,7 @@ jobs:
     permissions:
       actions: write
     steps:
-    - uses: styfle/cancel-workflow-action@0.12.1
+    - uses: styfle/cancel-workflow-action
       with:
         access_token: ${{ github.token }}
 
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test Ubuntu
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install Dependencies
       run: .github/scripts/install-ubuntu.sh
     - name: Build & Test
@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-2022
     name: Test Windows
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install Dependencies
       run: .github/scripts/install-windows.sh
       shell: bash
@@ -48,7 +48,7 @@ jobs:
     runs-on: macos-latest
     name: Test macOS
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install Dependencies
       run: .github/scripts/install-macos.sh ci
     - name: Build & Test
@@ -59,7 +59,7 @@ jobs:
     name: Build Release Windows
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: .github/scripts/install-windows.sh
         shell: bash
@@ -77,7 +77,7 @@ jobs:
     name: Build Release Windows (OpenMP)
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: .github/scripts/install-windows.sh
         shell: bash
@@ -95,7 +95,7 @@ jobs:
     name: Build Release Windows x64
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: .github/scripts/install-windows.sh
         shell: bash
@@ -113,7 +113,7 @@ jobs:
     name: Build Release Windows (OpenMP) x64
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: .github/scripts/install-windows.sh
         shell: bash
@@ -131,7 +131,7 @@ jobs:
     name: Build Release macOS
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install Dependencies
       run: .github/scripts/install-macos.sh ci
     - name: Build & Test
@@ -202,7 +202,7 @@ jobs:
 
   upload_release_assets:
     name: Upload Release Assets
-    needs: [build_release_windows, build_release_windows_openmp, build_release_windows_x64, build_release_windows_openmp_x64, build_release_macos]
+    needs: [build_release_windows, build_release_windows_openmp, build_release_windows_x64, build_release_windows_openmp_x64]
     if: "!cancelled() && github.event_name == 'release'"
     runs-on: ubuntu-latest
     permissions:
