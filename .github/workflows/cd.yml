@@ -168,6 +168,9 @@ jobs:
       with:
         name: solvespace_web
         path: build/bin/
+    - name: Ping solvespace.com
+      run: |
+        curl https://solvespace.com/index.pl?HiJWesthuesNewWebVersion
 
   # deploy_snap_amd64:
   #   needs: [test_ubuntu, test_windows, test_macos]
