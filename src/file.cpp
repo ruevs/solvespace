@@ -491,8 +491,6 @@ bool SolveSpaceUI::LoadFromFile(const Platform::Path &filename, bool canCancel) 
 
     char line[1024];
     while(fgets(line, (int)sizeof(line), fh)) {
-        fileIsEmpty = false;
-
         char *s = strchr(line, '\n');
         if(s) *s = '\0';
         // We should never get files with \r characters in them, but mailers
@@ -501,6 +499,8 @@ bool SolveSpaceUI::LoadFromFile(const Platform::Path &filename, bool canCancel) 
         if(s) *s = '\0';
 
         if(*line == '\0') continue;
+
+        fileIsEmpty = false;
 
         char *e = strchr(line, '=');
         if(e) {
