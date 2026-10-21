@@ -1,0 +1,2235 @@
+# Bulgarian translations for SolveSpace package.
+# Copyright (C) 2026 the SolveSpace authors
+# This file is distributed under the same license as the SolveSpace package.
+# Terminology reference: https://aula.bg/kurs-solidworks
+# Cross-checked with the Bulgarian FreeCAD Part and Sketcher catalogs.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: SolveSpace 3.1\n"
+"Report-Msgid-Bugs-To: phkahler@gmail.com\n"
+"POT-Creation-Date: 2025-01-26 21:04+0200\n"
+"PO-Revision-Date: 2026-10-21 00:00+0300\n"
+"Last-Translator: SolveSpace contributors\n"
+"Language-Team: Bulgarian\n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: clipboard.cpp:314
+msgid ""
+"Cut, paste, and copy work only in a workplane.\n"
+"\n"
+"Activate one with Sketch -> In Workplane."
+msgstr ""
+"Изрязването, поставянето и копирането работят само в работна равнина.\n"
+"\n"
+"Активирайте я чрез Скица -> В работна равнина."
+
+#: clipboard.cpp:331
+msgid "Clipboard is empty; nothing to paste."
+msgstr "Буферът за обмен е празен; няма какво да се постави."
+
+#: clipboard.cpp:378
+msgid "Number of copies to paste must be at least one."
+msgstr "Броят на копията за поставяне трябва да е поне 1."
+
+#: clipboard.cpp:394 textscreens.cpp:879
+msgid "Scale cannot be zero."
+msgstr "Мащабът не може да бъде нула."
+
+#: clipboard.cpp:436
+msgid "Select one point to define origin of rotation."
+msgstr "Изберете точка, която да зададе центъра на завъртане."
+
+#: clipboard.cpp:448
+msgid "Select two points to define translation vector."
+msgstr "Изберете две точки, които да зададат вектора на преместване."
+
+#: clipboard.cpp:458
+msgid "Transformation is identity. So all copies will be exactly on top of each other."
+msgstr "Трансформацията е тъждествена, затова всички копия ще съвпадат точно едно с друго."
+
+#: clipboard.cpp:462
+msgid "Too many items to paste; split this into smaller pastes."
+msgstr "Твърде много елементи за поставяне; поставете ги на няколко пъти."
+
+#: clipboard.cpp:467
+msgid "No workplane active."
+msgstr "Няма активна работна равнина."
+
+#: confscreen.cpp:410
+msgid "Bad format: specify coordinates as x, y, z"
+msgstr "Невалиден формат: задайте координатите като x, y, z"
+
+#: confscreen.cpp:420 style.cpp:729 textscreens.cpp:910
+msgid "Bad format: specify color as r, g, b"
+msgstr "Невалиден формат: задайте цвета като r, g, b"
+
+#: confscreen.cpp:446
+msgid ""
+"The perspective factor will have no effect until you enable View -> Use Perspective Projection."
+msgstr ""
+"Коефициентът на перспективата няма да има ефект, докато не включите "
+"Изглед -> Използване на перспективна проекция."
+
+#: confscreen.cpp:464 confscreen.cpp:474
+#, c-format
+msgid "Specify between 0 and %d digits after the decimal."
+msgstr "Задайте от 0 до %d цифри след десетичния разделител."
+
+#: confscreen.cpp:486
+msgid "Export scale must not be zero!"
+msgstr "Мащабът за експортиране не може да бъде нула!"
+
+#: confscreen.cpp:498
+msgid "Cutter radius offset must not be negative!"
+msgstr "Отместването за радиуса на фрезата не може да е отрицателно!"
+
+#: confscreen.cpp:557
+msgid "Bad value: autosave interval should be positive"
+msgstr "Невалидна стойност: интервалът за автоматично записване трябва да е положителен"
+
+#: confscreen.cpp:560
+msgid "Bad format: specify interval in integral minutes"
+msgstr "Невалиден формат: задайте интервала в цели минути"
+
+#: constraint.cpp:12
+msgctxt "constr-name"
+msgid "pts-coincident"
+msgstr "съвпадение на точки"
+
+#: constraint.cpp:13
+msgctxt "constr-name"
+msgid "pt-pt-distance"
+msgstr "разстояние точка–точка"
+
+#: constraint.cpp:14
+msgctxt "constr-name"
+msgid "pt-line-distance"
+msgstr "разстояние точка–права"
+
+#: constraint.cpp:15
+msgctxt "constr-name"
+msgid "pt-plane-distance"
+msgstr "разстояние точка–равнина"
+
+#: constraint.cpp:16
+msgctxt "constr-name"
+msgid "pt-face-distance"
+msgstr "разстояние точка–стена"
+
+#: constraint.cpp:17
+msgctxt "constr-name"
+msgid "proj-pt-pt-distance"
+msgstr "проектирано разстояние точка–точка"
+
+#: constraint.cpp:18
+msgctxt "constr-name"
+msgid "pt-in-plane"
+msgstr "точка в равнина"
+
+#: constraint.cpp:19
+msgctxt "constr-name"
+msgid "pt-on-line"
+msgstr "точка върху права"
+
+#: constraint.cpp:20
+msgctxt "constr-name"
+msgid "pt-on-face"
+msgstr "точка върху стена"
+
+#: constraint.cpp:21
+msgctxt "constr-name"
+msgid "eq-length"
+msgstr "равни дължини"
+
+#: constraint.cpp:22
+msgctxt "constr-name"
+msgid "eq-length-and-pt-ln-dist"
+msgstr "дължина = разстояние точка–права"
+
+#: constraint.cpp:23
+msgctxt "constr-name"
+msgid "eq-pt-line-distances"
+msgstr "равни разстояния точка–права"
+
+#: constraint.cpp:24
+msgctxt "constr-name"
+msgid "length-ratio"
+msgstr "отношение на дължините"
+
+#: constraint.cpp:25
+msgctxt "constr-name"
+msgid "arc-arc-length-ratio"
+msgstr "отношение на дължините на дъги"
+
+#: constraint.cpp:26
+msgctxt "constr-name"
+msgid "arc-line-length-ratio"
+msgstr "отношение на дължини дъга–отсечка"
+
+#: constraint.cpp:27
+msgctxt "constr-name"
+msgid "length-difference"
+msgstr "разлика в дължините"
+
+#: constraint.cpp:28
+msgctxt "constr-name"
+msgid "arc-arc-len-difference"
+msgstr "разлика в дължините на дъги"
+
+#: constraint.cpp:29
+msgctxt "constr-name"
+msgid "arc-line-len-difference"
+msgstr "разлика в дължините дъга–отсечка"
+
+#: constraint.cpp:30
+msgctxt "constr-name"
+msgid "symmetric"
+msgstr "симетрия"
+
+#: constraint.cpp:31
+msgctxt "constr-name"
+msgid "symmetric-h"
+msgstr "хоризонтална симетрия"
+
+#: constraint.cpp:32
+msgctxt "constr-name"
+msgid "symmetric-v"
+msgstr "вертикална симетрия"
+
+#: constraint.cpp:33
+msgctxt "constr-name"
+msgid "symmetric-line"
+msgstr "симетрия спрямо права"
+
+#: constraint.cpp:34
+msgctxt "constr-name"
+msgid "at-midpoint"
+msgstr "в средата"
+
+#: constraint.cpp:35
+msgctxt "constr-name"
+msgid "horizontal"
+msgstr "хоризонталност"
+
+#: constraint.cpp:36
+msgctxt "constr-name"
+msgid "vertical"
+msgstr "вертикалност"
+
+#: constraint.cpp:37
+msgctxt "constr-name"
+msgid "diameter"
+msgstr "диаметър"
+
+#: constraint.cpp:38
+msgctxt "constr-name"
+msgid "pt-on-circle"
+msgstr "точка върху окръжност"
+
+#: constraint.cpp:39
+msgctxt "constr-name"
+msgid "same-orientation"
+msgstr "еднаква ориентация"
+
+#: constraint.cpp:40
+msgctxt "constr-name"
+msgid "angle"
+msgstr "ъгъл"
+
+#: constraint.cpp:41
+msgctxt "constr-name"
+msgid "parallel"
+msgstr "успоредност"
+
+#: constraint.cpp:42
+msgctxt "constr-name"
+msgid "arc-line-tangent"
+msgstr "допирателност дъга–права"
+
+#: constraint.cpp:43
+msgctxt "constr-name"
+msgid "cubic-line-tangent"
+msgstr "допирателност кубична крива–права"
+
+#: constraint.cpp:44
+msgctxt "constr-name"
+msgid "curve-curve-tangent"
+msgstr "допирателност между криви"
+
+#: constraint.cpp:45
+msgctxt "constr-name"
+msgid "perpendicular"
+msgstr "перпендикулярност"
+
+#: constraint.cpp:46
+msgctxt "constr-name"
+msgid "eq-radius"
+msgstr "равни радиуси"
+
+#: constraint.cpp:47
+msgctxt "constr-name"
+msgid "eq-angle"
+msgstr "равни ъгли"
+
+#: constraint.cpp:48
+msgctxt "constr-name"
+msgid "eq-line-len-arc-len"
+msgstr "дължина на отсечка = дължина на дъга"
+
+#: constraint.cpp:49
+msgctxt "constr-name"
+msgid "lock-where-dragged"
+msgstr "фиксиране в текущото положение"
+
+#: constraint.cpp:50
+msgctxt "constr-name"
+msgid "comment"
+msgstr "коментар"
+
+#: constraint.cpp:151
+msgid ""
+"The point you selected does not belong to the arc. The arc and line segment do not share an end "
+"point.\n"
+"\n"
+"Select the end point of the arc at which you want it to be tangent to the line."
+msgstr ""
+"Избраната точка не принадлежи на дъгата. Дъгата и отсечката нямат обща крайна точка.\n"
+"\n"
+"Изберете крайната точка на дъгата, в която тя трябва да е допирателна към правата."
+
+#: constraint.cpp:158
+msgid ""
+"The tangent arc and line segment must share an endpoint. Constrain them with Constrain -> On "
+"Point before constraining tangent.\n"
+"\n"
+"Alternatively select the end point of the arc at which you want it to be tangent to the line."
+msgstr ""
+"За да са допирателни, дъгата и отсечката трябва да имат обща крайна точка. "
+"Задайте съвпадение чрез Ограничения -> В точка / върху крива / в равнина, "
+"преди да зададете допирателност.\n"
+"\n"
+"Или изберете крайната точка на дъгата, в която тя трябва да е допирателна към правата."
+
+#: constraint.cpp:186
+msgid ""
+"The point you selected is not an end point of the cubic spline. The spline and line segment do "
+"not share an end point.\n"
+"\n"
+"Select the end point of the spline at which you want it to be tangent to the line."
+msgstr ""
+"Избраната точка не е крайна точка на кубичната сплайн-крива. "
+"Сплайн-кривата и отсечката нямат обща крайна точка.\n"
+"\n"
+"Изберете крайната точка на сплайн-кривата, в която тя трябва да е допирателна към правата."
+
+#: constraint.cpp:193
+msgid ""
+"The tangent cubic spline and line segment must share an endpoint. Constrain them with Constrain -"
+"> On Point before constraining tangent.\n"
+"\n"
+"Alternatively select the end point of the cubic spline at which you want it to be tangent to the "
+"line."
+msgstr ""
+"За да са допирателни, кубичната сплайн-крива и отсечката трябва да имат обща крайна точка. "
+"Задайте съвпадение чрез Ограничения -> В точка / върху крива / в равнина, "
+"преди да зададете допирателност.\n"
+"\n"
+"Или изберете крайната точка на кубичната сплайн-крива, "
+"в която тя трябва да е допирателна към правата."
+
+#: constraint.cpp:237
+msgid ""
+"The points you selected are not end points of the two curves. The curves do not share an end "
+"point.\n"
+"\n"
+"Select the end points of both curves at which you want them to be tangent to each other."
+msgstr ""
+"Избраните точки не са крайни точки на двете криви. Кривите нямат обща крайна точка.\n"
+"\n"
+"Изберете крайните точки на двете криви, в които те трябва да са допирателни една към друга."
+
+#: constraint.cpp:244
+msgid ""
+"The curves must share an endpoint. Constrain them with Constrain -> On Point before constraining "
+"tangent.\n"
+"\n"
+"Alternatively select the end points of both curves at which you want the curves to be tangent."
+msgstr ""
+"Кривите трябва да имат обща крайна точка. "
+"Задайте съвпадение чрез Ограничения -> В точка / върху крива / в равнина, "
+"преди да зададете допирателност.\n"
+"\n"
+"Или изберете крайните точки на двете криви, в които те трябва да са допирателни."
+
+#: constraint.cpp:303
+msgid ""
+"Bad selection for distance / diameter constraint. This constraint can apply to:\n"
+"\n"
+"    * two points (distance between points)\n"
+"    * a line segment (length)\n"
+"    * two points and a line segment or normal (projected distance)\n"
+"    * a workplane and a point (minimum distance)\n"
+"    * a line segment and a point (minimum distance)\n"
+"    * a plane face and a point (minimum distance)\n"
+"    * a circle or an arc (diameter)\n"
+msgstr ""
+"Невалиден избор за ограничение за разстояние / диаметър. То може да се приложи към:\n"
+"\n"
+"    * две точки (разстояние между точките)\n"
+"    * отсечка (дължина)\n"
+"    * две точки и отсечка или нормала (проектирано разстояние)\n"
+"    * работна равнина и точка (минимално разстояние)\n"
+"    * отсечка и точка (минимално разстояние)\n"
+"    * плоска стена и точка (минимално разстояние)\n"
+"    * окръжност или дъга (диаметър)\n"
+
+#: constraint.cpp:366
+msgid ""
+"Bad selection for on point / curve / plane constraint. This constraint can apply to:\n"
+"\n"
+"    * two or more points (points coincident)\n"
+"    * a point and a workplane (point in plane)\n"
+"    * a point and a line segment (point on line)\n"
+"    * a point and a circle or arc (point on curve)\n"
+"    * a point and one to three plane faces (point on face(s))\n"
+msgstr ""
+"Невалиден избор за ограничение за точка / крива / равнина. То може да се приложи към:\n"
+"\n"
+"    * две или повече точки (съвпадение на точки)\n"
+"    * точка и работна равнина (точка в равнина)\n"
+"    * точка и отсечка (точка върху права)\n"
+"    * точка и окръжност или дъга (точка върху крива)\n"
+"    * точка и от една до три плоски стени (точка върху стените)\n"
+
+#: constraint.cpp:427
+msgid ""
+"Bad selection for equal length / radius constraint. This constraint can apply to:\n"
+"\n"
+"    * two or more line segments (equal length)\n"
+"    * two line segments and two points (equal point-line distances)\n"
+"    * a line segment and two points (equal point-line distances)\n"
+"    * a line segment, and a point and line segment (point-line distance equals length)\n"
+"    * two or more circles or arcs (equal radius)\n"
+"    * a line segment and an arc (line segment length equals arc length)\n"
+msgstr ""
+"Невалиден избор за ограничение за равни дължини / радиуси. То може да се приложи към:\n"
+"\n"
+"    * две или повече отсечки (равни дължини)\n"
+"    * две отсечки и две точки (равни разстояния точка–права)\n"
+"    * отсечка и две точки (равни разстояния точка–права)\n"
+"    * отсечка, точка и друга отсечка (разстоянието точка–права е равно на дължината)\n"
+"    * две или повече окръжности или дъги (равни радиуси)\n"
+"    * отсечка и дъга (дължината на отсечката е равна на дължината на дъгата)\n"
+
+#: constraint.cpp:480
+msgid ""
+"Bad selection for length ratio constraint. This constraint can apply to:\n"
+"\n"
+"    * two line segments\n"
+"    * two arcs\n"
+"    * one arc and one line segment\n"
+msgstr ""
+"Невалиден избор за ограничение за отношение на дължини. То може да се приложи към:\n"
+"\n"
+"    * две отсечки\n"
+"    * две дъги\n"
+"    * дъга и отсечка\n"
+
+#: constraint.cpp:515
+msgid ""
+"Bad selection for length difference constraint. This constraint can apply to:\n"
+"\n"
+"    * two line segments\n"
+"    * two arcs\n"
+"    * one arc and one line segment\n"
+msgstr ""
+"Невалиден избор за ограничение за разлика в дължините. То може да се приложи към:\n"
+"\n"
+"    * две отсечки\n"
+"    * две дъги\n"
+"    * дъга и отсечка\n"
+
+#: constraint.cpp:550
+msgid ""
+"Bad selection for at midpoint constraint. This constraint can apply to:\n"
+"\n"
+"    * a line segment and a point (point at midpoint)\n"
+"    * a line segment and a workplane (line's midpoint on plane)\n"
+msgstr ""
+"Невалиден избор за ограничението „В средата“. То може да се приложи към:\n"
+"\n"
+"    * отсечка и точка (точка в средата)\n"
+"    * отсечка и работна равнина (средата на отсечката е в равнината)\n"
+
+#: constraint.cpp:608
+msgid ""
+"Bad selection for symmetric constraint. This constraint can apply to:\n"
+"\n"
+"    * two points or a line segment (symmetric about workplane's coordinate axis)\n"
+"    * line segment, and two points or a line segment (symmetric about line segment)\n"
+"    * workplane, and two points or a line segment (symmetric about workplane)\n"
+msgstr ""
+"Невалиден избор за ограничение за симетрия. То може да се приложи към:\n"
+"\n"
+"    * две точки или отсечка (симетрия спрямо координатна ос на работната равнина)\n"
+"    * отсечка и две точки или друга отсечка (симетрия спрямо отсечка)\n"
+"    * работна равнина и две точки или отсечка (симетрия спрямо работната равнина)\n"
+
+#: constraint.cpp:623
+msgid "A workplane must be active when constraining symmetric without an explicit symmetry plane."
+msgstr ""
+"При задаване на симетрия без изрично избрана равнина на симетрия "
+"трябва да има активна работна равнина."
+
+#: constraint.cpp:663
+msgid ""
+"Activate a workplane (with Sketch -> In Workplane) before applying a horizontal or vertical "
+"constraint."
+msgstr ""
+"Активирайте работна равнина (чрез Скица -> В работна равнина), "
+"преди да зададете хоризонтално или вертикално ограничение."
+
+#: constraint.cpp:679
+msgid ""
+"Bad selection for horizontal / vertical constraint. This constraint can apply to:\n"
+"\n"
+"    * two or more points\n"
+"    * one or more line segments\n"
+msgstr ""
+"Невалиден избор за хоризонтално / вертикално ограничение. То може да се приложи към:\n"
+"\n"
+"    * две или повече точки\n"
+"    * една или повече отсечки\n"
+
+#: constraint.cpp:697
+msgid ""
+"Bad selection for same orientation constraint. This constraint can apply to:\n"
+"\n"
+"    * two normals\n"
+msgstr ""
+"Невалиден избор за ограничение за еднаква ориентация. То може да се приложи към:\n"
+"\n"
+"    * две нормали\n"
+
+#: constraint.cpp:748
+msgid "Must select an angle constraint."
+msgstr "Трябва да изберете ъглово ограничение."
+
+#: constraint.cpp:761
+msgid "Must select a constraint with associated label."
+msgstr "Трябва да изберете ограничение с надпис."
+
+#: constraint.cpp:784
+msgid ""
+"Bad selection for angle constraint. This constraint can apply to:\n"
+"\n"
+"Angle between:\n"
+"    * two line segments\n"
+"    * a line segment and a normal\n"
+"    * two normals\n"
+"\n"
+"Equal angles:\n"
+"    * four line segments or normals (equal angle between A,B and C,D)\n"
+"    * three line segments or normals (equal angle between A,B and B,C)\n"
+msgstr ""
+"Невалиден избор за ъглово ограничение. То може да се приложи към:\n"
+"\n"
+"Ъгъл между:\n"
+"    * две отсечки\n"
+"    * отсечка и нормала\n"
+"    * две нормали\n"
+"\n"
+"Равни ъгли:\n"
+"    * четири отсечки или нормали (равни ъгли между A и B и между C и D)\n"
+"    * три отсечки или нормали (равни ъгли между A и B и между B и C)\n"
+
+#: constraint.cpp:872
+msgid "Curve-curve tangency must apply in workplane."
+msgstr "Допирателността между криви трябва да се задава в работна равнина."
+
+#: constraint.cpp:887
+msgid ""
+"Bad selection for parallel / tangent constraint. This constraint can apply to:\n"
+"\n"
+"    * two faces\n"
+"    * two or more line segments (parallel)\n"
+"    * one or more line segments and one or more normals (parallel)\n"
+"    * two or more normals (parallel)\n"
+"    * two line segments, arcs, or beziers, that share an endpoint (tangent)\n"
+"    * two line segments, arcs, or beziers, that do not share an endpoint and the end point(s) of "
+"the curve(s) (tangent)\n"
+msgstr ""
+"Невалиден избор за ограничение за успоредност / допирателност. То може да се приложи към:\n"
+"\n"
+"    * две стени\n"
+"    * две или повече отсечки (успоредност)\n"
+"    * една или повече отсечки и една или повече нормали (успоредност)\n"
+"    * две или повече нормали (успоредност)\n"
+"    * две отсечки, дъги или криви на Безие с обща крайна точка (допирателност)\n"
+"    * две отсечки, дъги или криви на Безие без обща крайна точка "
+"и крайните точки на съответните криви (допирателност)\n"
+
+#: constraint.cpp:914
+msgid ""
+"Bad selection for perpendicular constraint. This constraint can apply to:\n"
+"\n"
+"    * two faces\n"
+"    * two line segments\n"
+"    * a line segment and a normal\n"
+"    * two normals\n"
+msgstr ""
+"Невалиден избор за ограничение за перпендикулярност. То може да се приложи към:\n"
+"\n"
+"    * две стени\n"
+"    * две отсечки\n"
+"    * отсечка и нормала\n"
+"    * две нормали\n"
+
+#: constraint.cpp:931
+msgid ""
+"Bad selection for lock point where dragged constraint. This constraint can apply to:\n"
+"\n"
+"    * a point\n"
+msgstr ""
+"Невалиден избор за фиксиране на точка в текущото положение. "
+"Това ограничение може да се приложи към:\n"
+"\n"
+"    * точка\n"
+
+#: constraint.cpp:946 mouse.cpp:1160
+msgid "NEW COMMENT -- DOUBLE-CLICK TO EDIT"
+msgstr "НОВ КОМЕНТАР -- ЩРАКНЕТЕ ДВА ПЪТИ ЗА РЕДАКТИРАНЕ"
+
+#: constraint.cpp:952
+msgid "click center of comment text"
+msgstr "щракнете в центъра на текста на коментара"
+
+#: export.cpp:19
+msgid ""
+"No solid model present; draw one with extrudes and revolves, or use Export 2d View to export bare "
+"lines and curves."
+msgstr ""
+"Няма твърдотелен модел; създайте такъв чрез изтегляне и завъртане "
+"или използвайте Експортиране на 2D изглед за експортиране само на линии и криви."
+
+#: export.cpp:61
+msgid ""
+"Bad selection for export section. Please select:\n"
+"\n"
+"    * nothing, with an active workplane (workplane is section plane)\n"
+"    * a face (section plane through face)\n"
+"    * a point and two line segments (plane through point and parallel to lines)\n"
+msgstr ""
+"Невалиден избор за експортиране на сечение. Изберете:\n"
+"\n"
+"    * нищо, при активна работна равнина (тя е равнината на сечението)\n"
+"    * стена (равнина на сечението през стената)\n"
+"    * точка и две отсечки (равнина през точката, успоредна на отсечките)\n"
+
+#: export.cpp:818
+msgid "Active group mesh is empty; nothing to export."
+msgstr "Мрежата на активната група е празна; няма какво да се експортира."
+
+#: exportvector.cpp:336
+msgid "freehand lines were replaced with continuous lines"
+msgstr "свободно начертаните линии бяха заменени с непрекъснати линии"
+
+#: exportvector.cpp:338
+msgid "zigzag lines were replaced with continuous lines"
+msgstr "зигзагообразните линии бяха заменени с непрекъснати линии"
+
+#: exportvector.cpp:592
+msgid "Some aspects of the drawing have no DXF equivalent and were not exported:\n"
+msgstr "Някои елементи на чертежа нямат еквивалент в DXF и не бяха експортирани:\n"
+
+#: exportvector.cpp:838
+msgid "PDF page size exceeds 200 by 200 inches; many viewers may reject this file."
+msgstr ""
+"Размерът на PDF страницата надвишава 200 на 200 инча; "
+"много програми за преглед може да откажат да отворят файла."
+
+#: file.cpp:44 group.cpp:91
+msgctxt "group-name"
+msgid "sketch-in-plane"
+msgstr "скица-в-равнина"
+
+#: file.cpp:62
+msgctxt "group-name"
+msgid "#references"
+msgstr "#опорна-геометрия"
+
+#: file.cpp:555
+msgid "The file is empty. It may be corrupt."
+msgstr "Файлът е празен. Възможно е да е повреден."
+
+#: file.cpp:560
+msgid "Unrecognized data in file. This file may be corrupt, or from a newer version of the program."
+msgstr ""
+"Неразпознати данни във файла. Възможно е той да е повреден "
+"или да е създаден с по-нова версия на програмата."
+
+#: file.cpp:876
+msgctxt "title"
+msgid "Missing File"
+msgstr "Липсващ файл"
+
+#: file.cpp:877
+#, c-format
+msgctxt "dialog"
+msgid "The linked file “%s” is not present."
+msgstr "Свързаният файл „%s“ липсва."
+
+#: file.cpp:879
+msgctxt "dialog"
+msgid ""
+"Do you want to locate it manually?\n"
+"\n"
+"If you decline, any geometry that depends on the missing file will be permanently removed."
+msgstr ""
+"Искате ли да го намерите ръчно?\n"
+"\n"
+"Ако откажете, цялата геометрия, която зависи от липсващия файл, "
+"ще бъде окончателно премахната."
+
+#: file.cpp:882
+msgctxt "button"
+msgid "&Yes"
+msgstr "&Да"
+
+#: file.cpp:884
+msgctxt "button"
+msgid "&No"
+msgstr "&Не"
+
+#: file.cpp:886 solvespace.cpp:652
+msgctxt "button"
+msgid "&Cancel"
+msgstr "&Отказ"
+
+#: graphicswin.cpp:41
+msgid "&File"
+msgstr "&Файл"
+
+#: graphicswin.cpp:42
+msgid "&New"
+msgstr "&Нов"
+
+#: graphicswin.cpp:43
+msgid "&Open..."
+msgstr "&Отваряне..."
+
+#: graphicswin.cpp:44
+msgid "Open &Recent"
+msgstr "Отваряне на &последни файлове"
+
+#: graphicswin.cpp:45
+msgid "&Save"
+msgstr "&Запис"
+
+#: graphicswin.cpp:46
+msgid "Save &As..."
+msgstr "Запис &като..."
+
+#: graphicswin.cpp:48
+msgid "Export &Image..."
+msgstr "Експортиране на &изображение..."
+
+#: graphicswin.cpp:49
+msgid "Export 2d &View..."
+msgstr "Експортиране на 2D изг&лед..."
+
+#: graphicswin.cpp:50
+msgid "Export 2d &Section..."
+msgstr "Експортиране на 2D &сечение..."
+
+#: graphicswin.cpp:51
+msgid "Export 3d &Wireframe..."
+msgstr "Експортиране на 3D &телена рамка..."
+
+#: graphicswin.cpp:52
+msgid "Export Triangle &Mesh..."
+msgstr "Експортиране на триъгълна &мрежа..."
+
+#: graphicswin.cpp:53
+msgid "Export &Surfaces..."
+msgstr "Експортиране на по&върхнини..."
+
+#: graphicswin.cpp:54
+msgid "Im&port..."
+msgstr "Импо&ртиране..."
+
+#: graphicswin.cpp:57
+msgid "E&xit"
+msgstr "Из&ход"
+
+#: graphicswin.cpp:60
+msgid "&Edit"
+msgstr "&Редактиране"
+
+#: graphicswin.cpp:61
+msgid "&Undo"
+msgstr "&Отмяна"
+
+#: graphicswin.cpp:62
+msgid "&Redo"
+msgstr "&Повтаряне"
+
+#: graphicswin.cpp:63
+msgid "Re&generate All"
+msgstr "Повторно &генериране на всичко"
+
+#: graphicswin.cpp:65
+msgid "Snap Selection to &Grid"
+msgstr "Прилепване на избраното към &мрежата"
+
+#: graphicswin.cpp:66
+msgid "Rotate Imported &90°"
+msgstr "Завъртане на импортираното на &90°"
+
+#: graphicswin.cpp:68
+msgid "Cu&t"
+msgstr "Из&рязване"
+
+#: graphicswin.cpp:69
+msgid "&Copy"
+msgstr "&Копиране"
+
+#: graphicswin.cpp:70
+msgid "&Paste"
+msgstr "По&ставяне"
+
+#: graphicswin.cpp:71
+msgid "Paste &Transformed..."
+msgstr "Поставяне с &трансформация..."
+
+#: graphicswin.cpp:72
+msgid "&Delete"
+msgstr "&Изтриване"
+
+#: graphicswin.cpp:74
+msgid "Select &Edge Chain"
+msgstr "Избиране на верига от р&ъбове"
+
+#: graphicswin.cpp:75
+msgid "Select &All"
+msgstr "Избиране на &всичко"
+
+#: graphicswin.cpp:76
+msgid "&Unselect All"
+msgstr "Премахване на из&бора"
+
+#: graphicswin.cpp:78
+msgid "&Line Styles..."
+msgstr "Стилове на &линии..."
+
+#: graphicswin.cpp:79
+msgid "&View Projection..."
+msgstr "Про&екция на изгледа..."
+
+#: graphicswin.cpp:81
+msgid "Con&figuration..."
+msgstr "Конфигура&ция..."
+
+#: graphicswin.cpp:84
+msgid "&View"
+msgstr "&Изглед"
+
+#: graphicswin.cpp:85
+msgid "Zoom &In"
+msgstr "&Увеличаване"
+
+#: graphicswin.cpp:86
+msgid "Zoom &Out"
+msgstr "&Намаляване"
+
+#: graphicswin.cpp:87
+msgid "Zoom To &Fit"
+msgstr "По&биране на изгледа"
+
+#: graphicswin.cpp:89
+msgid "Align View to &Workplane"
+msgstr "Подравняване на изгледа към &работната равнина"
+
+#: graphicswin.cpp:90
+msgid "Nearest &Ortho View"
+msgstr "Най-близък &ортогонален изглед"
+
+#: graphicswin.cpp:91
+msgid "Nearest &Isometric View"
+msgstr "Най-близък &изометричен изглед"
+
+#: graphicswin.cpp:92
+msgid "&Center View At Point"
+msgstr "&Центриране на изгледа около точка"
+
+#: graphicswin.cpp:94
+msgid "Show Snap &Grid"
+msgstr "Показване на координатната &мрежа"
+
+#: graphicswin.cpp:95
+msgid "Darken Inactive Solids"
+msgstr "Потъмняване на неактивните тела"
+
+#: graphicswin.cpp:96
+msgid "Use &Perspective Projection"
+msgstr "Използване на &перспективна проекция"
+
+#: graphicswin.cpp:97
+msgid "Show E&xploded View"
+msgstr "Показване на раз&глобен изглед"
+
+#: graphicswin.cpp:98
+msgid "Dimension &Units"
+msgstr "Мерни &единици"
+
+#: graphicswin.cpp:99
+msgid "Dimensions in &Millimeters"
+msgstr "Размери в &милиметри"
+
+#: graphicswin.cpp:100
+msgid "Dimensions in M&eters"
+msgstr "Размери в м&етри"
+
+#: graphicswin.cpp:101
+msgid "Dimensions in &Inches"
+msgstr "Размери в &инчове"
+
+#: graphicswin.cpp:102
+msgid "Dimensions in &Feet and Inches"
+msgstr "Размери във &футове и инчове"
+
+#: graphicswin.cpp:104
+msgid "Show &Toolbar"
+msgstr "Показване на &лентата с инструменти"
+
+#: graphicswin.cpp:105
+msgid "Show Property Bro&wser"
+msgstr "Показване на панела със &свойства"
+
+#: graphicswin.cpp:107
+msgid "&Full Screen"
+msgstr "Цял е&кран"
+
+#: graphicswin.cpp:109
+msgid "&New Group"
+msgstr "&Нова група"
+
+#: graphicswin.cpp:110
+msgid "Sketch In &3d"
+msgstr "Скица в &3D"
+
+#: graphicswin.cpp:111
+msgid "Sketch In New &Workplane"
+msgstr "Скица в нова &работна равнина"
+
+#: graphicswin.cpp:113
+msgid "Step &Translating"
+msgstr "&Линейно размножаване"
+
+#: graphicswin.cpp:114
+msgid "Step &Rotating"
+msgstr "&Кръгово размножаване"
+
+#: graphicswin.cpp:116
+msgid "E&xtrude"
+msgstr "&Изтегляне"
+
+#: graphicswin.cpp:117
+msgid "&Helix"
+msgstr "&Винтово изтегляне"
+
+#: graphicswin.cpp:118
+# Lathe makes a full revolution; Revolve uses an adjustable angle.
+msgid "&Lathe"
+msgstr "&Пълно завъртане (360°)"
+
+#: graphicswin.cpp:119
+msgid "Re&volve"
+msgstr "Завъртане на &ъгъл"
+
+#: graphicswin.cpp:121
+msgid "Link / Assemble..."
+msgstr "Свързване / сглобяване..."
+
+#: graphicswin.cpp:122
+msgid "Link Recent"
+msgstr "Последно свързани файлове"
+
+#: graphicswin.cpp:124
+msgid "&Sketch"
+msgstr "&Скица"
+
+#: graphicswin.cpp:125
+msgid "In &Workplane"
+msgstr "В &работна равнина"
+
+#: graphicswin.cpp:126
+msgid "Anywhere In &3d"
+msgstr "Навсякъде в &3D"
+
+#: graphicswin.cpp:128
+msgid "Datum &Point"
+msgstr "Опорна &точка"
+
+#: graphicswin.cpp:129
+msgid "Wor&kplane"
+msgstr "Ра&ботна равнина"
+
+#: graphicswin.cpp:131
+msgid "Line &Segment"
+msgstr "&Отсечка"
+
+#: graphicswin.cpp:132
+msgid "C&onstruction Line Segment"
+msgstr "Кон&структивна отсечка"
+
+#: graphicswin.cpp:133
+msgid "&Rectangle"
+msgstr "&Правоъгълник"
+
+#: graphicswin.cpp:134
+msgid "&Circle"
+msgstr "О&кръжност"
+
+#: graphicswin.cpp:135
+msgid "&Arc of a Circle"
+msgstr "&Дъга от окръжност"
+
+#: graphicswin.cpp:136
+msgid "&Bezier Cubic Spline"
+msgstr "Кубична сплайн-крива на Б&езие"
+
+#: graphicswin.cpp:138
+msgid "&Text in TrueType Font"
+msgstr "Текст с &шрифт TrueType"
+
+#: graphicswin.cpp:139
+msgid "I&mage"
+msgstr "Изобра&жение"
+
+#: graphicswin.cpp:141
+msgid "To&ggle Construction"
+msgstr "Превключване на ко&нструктивна геометрия"
+
+#: graphicswin.cpp:142
+msgid "Ta&ngent Arc at Point"
+msgstr "Допирателна д&ъга в точка"
+
+#: graphicswin.cpp:143
+msgid "Split Curves at &Intersection"
+msgstr "Разделяне на криви в пресечните то&чки"
+
+#: graphicswin.cpp:145
+msgid "&Constrain"
+msgstr "&Ограничения"
+
+#: graphicswin.cpp:146
+msgid "&Distance / Diameter"
+msgstr "&Разстояние / диаметър"
+
+#: graphicswin.cpp:147
+msgid "Re&ference Dimension"
+msgstr "Ре&ферентен размер"
+
+#: graphicswin.cpp:148
+msgid "A&ngle / Equal Angle"
+msgstr "&Ъгъл / равни ъгли"
+
+#: graphicswin.cpp:149
+msgid "Reference An&gle"
+msgstr "Референтен ъ&гъл"
+
+#: graphicswin.cpp:150
+msgid "Other S&upplementary Angle"
+msgstr "Другият &допълнителен ъгъл"
+
+#: graphicswin.cpp:151
+msgid "Toggle R&eference Dim"
+msgstr "Превключване на референтен ра&змер"
+
+#: graphicswin.cpp:153
+msgid "&Horizontal"
+msgstr "&Хоризонтално"
+
+#: graphicswin.cpp:154
+msgid "&Vertical"
+msgstr "&Вертикално"
+
+#: graphicswin.cpp:156
+msgid "&On Point / Curve / Plane"
+msgstr "В &точка / върху крива / в равнина"
+
+#: graphicswin.cpp:157
+msgid "E&qual Length / Radius"
+msgstr "Равни дължини / ради&уси"
+
+#: graphicswin.cpp:158
+msgid "Length / Arc Ra&tio"
+msgstr "&Отношение на дължини на отсечки / дъги"
+
+#: graphicswin.cpp:159
+msgid "Length / Arc Diff&erence"
+msgstr "Раз&лика в дължините на отсечки / дъги"
+
+#: graphicswin.cpp:160
+msgid "At &Midpoint"
+msgstr "В &средата"
+
+#: graphicswin.cpp:161
+msgid "S&ymmetric"
+msgstr "Си&метрично"
+
+#: graphicswin.cpp:162
+msgid "Para&llel / Tangent"
+msgstr "Успоредно / доп&ирателно"
+
+#: graphicswin.cpp:163
+msgid "&Perpendicular"
+msgstr "&Перпендикулярно"
+
+#: graphicswin.cpp:164
+msgid "Same Orient&ation"
+msgstr "Еднаква ори&ентация"
+
+#: graphicswin.cpp:165
+msgid "Lock Point Where &Dragged"
+msgstr "Фиксиране на точката в теку&щото положение"
+
+#: graphicswin.cpp:167
+msgid "Comment"
+msgstr "Коментар"
+
+#: graphicswin.cpp:169
+msgid "&Analyze"
+msgstr "&Анализ"
+
+#: graphicswin.cpp:170
+msgid "Measure &Volume"
+msgstr "Измерване на &обема"
+
+#: graphicswin.cpp:171
+msgid "Measure A&rea"
+msgstr "Измерване на &площта"
+
+#: graphicswin.cpp:172
+msgid "Measure &Perimeter"
+msgstr "Измерване на п&ериметъра"
+
+#: graphicswin.cpp:173
+msgid "Show &Interfering Parts"
+msgstr "Показване на преси&чащите се части"
+
+#: graphicswin.cpp:174
+msgid "Show &Naked Edges"
+msgstr "Показване на &свободните ръбове"
+
+#: graphicswin.cpp:175
+msgid "Show &Center of Mass"
+msgstr "Показване на &центъра на масата"
+
+#: graphicswin.cpp:177
+msgid "Show &Underconstrained Points"
+msgstr "Показване на &недостатъчно ограничените точки"
+
+#: graphicswin.cpp:179
+msgid "&Trace Point"
+msgstr "Проследяване на &точка"
+
+#: graphicswin.cpp:180
+msgid "&Stop Tracing..."
+msgstr "Спиране на п&роследяването..."
+
+#: graphicswin.cpp:181
+msgid "Step &Dimension..."
+msgstr "Стъпкова промяна на ра&змер..."
+
+#: graphicswin.cpp:183
+msgid "&Help"
+msgstr "&Помощ"
+
+#: graphicswin.cpp:184
+msgid "&Language"
+msgstr "&Език"
+
+#: graphicswin.cpp:185
+msgid "&Website / Manual"
+msgstr "&Уебсайт / ръководство"
+
+#: graphicswin.cpp:186
+msgid "&Go to GitHub commit"
+msgstr "&Отваряне на ревизията в GitHub"
+
+#: graphicswin.cpp:188
+msgid "&About"
+msgstr "&За програмата"
+
+#: graphicswin.cpp:362
+msgid "(no recent files)"
+msgstr "(няма скорошни файлове)"
+
+#: graphicswin.cpp:370
+#, c-format
+msgid "File '%s' does not exist."
+msgstr "Файлът „%s“ не съществува."
+
+#: graphicswin.cpp:779
+msgid "No workplane is active, so the grid will not appear."
+msgstr "Няма активна работна равнина, затова координатната мрежа няма да се покаже."
+
+#: graphicswin.cpp:794
+msgid ""
+"The perspective factor is set to zero, so the view will always be a parallel projection.\n"
+"\n"
+"For a perspective projection, modify the perspective factor in the configuration screen. A value "
+"around 0.3 is typical."
+msgstr ""
+"Коефициентът на перспективата е нула, затова изгледът винаги ще бъде успоредна проекция.\n"
+"\n"
+"За перспективна проекция променете коефициента на перспективата в екрана за конфигурация. "
+"Обичайна стойност е около 0.3."
+
+#: graphicswin.cpp:884
+msgid "Select a point; this point will become the center of the view on screen."
+msgstr "Изберете точка; тя ще стане център на изгледа на екрана."
+
+#: graphicswin.cpp:1193
+msgid "No additional entities share endpoints with the selected entities."
+msgstr "Няма други елементи с общи крайни точки с избраните елементи."
+
+#: graphicswin.cpp:1211
+msgid ""
+"To use this command, select a point or other entity from an linked part, or make a link group the "
+"active group."
+msgstr ""
+"За да използвате тази команда, изберете точка или друг елемент от свързана част "
+"или направете групата за свързване активна."
+
+#: graphicswin.cpp:1234
+msgid ""
+"No workplane is active. Activate a workplane (with Sketch -> In Workplane) to define the plane "
+"for the snap grid."
+msgstr ""
+"Няма активна работна равнина. Активирайте такава (чрез Скица -> В работна равнина), "
+"за да зададете равнината на координатната мрежа."
+
+#: graphicswin.cpp:1241
+msgid ""
+"Can't snap these items to grid; select points, text comments, or constraints with a label. To "
+"snap a line, select its endpoints."
+msgstr ""
+"Тези елементи не могат да се прилепят към мрежата; "
+"изберете точки, текстови коментари или ограничения с надпис. "
+"За да прилепите отсечка, изберете крайните ѝ точки."
+
+#: graphicswin.cpp:1326
+msgid "No workplane selected. Activating default workplane for this group."
+msgstr "Не е избрана работна равнина. Активира се работната равнина по подразбиране за тази група."
+
+#: graphicswin.cpp:1329
+msgid ""
+"No workplane is selected, and the active group does not have a default workplane. Try selecting a "
+"workplane, or activating a sketch-in-new-workplane group."
+msgstr ""
+"Не е избрана работна равнина, а активната група няма равнина по подразбиране. "
+"Изберете работна равнина или активирайте група за скица в нова работна равнина."
+
+#: graphicswin.cpp:1350
+msgid ""
+"Bad selection for tangent arc at point. Select a single point, or select nothing to set up arc "
+"parameters."
+msgstr ""
+"Невалиден избор за допирателна дъга в точка. "
+"Изберете една точка или не избирайте нищо, за да зададете параметрите на дъгата."
+
+#: graphicswin.cpp:1361
+msgid "click point on arc (draws anti-clockwise)"
+msgstr "щракнете върху точка от дъгата (чертае се обратно на часовниковата стрелка)"
+
+#: graphicswin.cpp:1362
+msgid "click to place datum point"
+msgstr "щракнете, за да поставите опорната точка"
+
+#: graphicswin.cpp:1363
+msgid "click first point of line segment"
+msgstr "щракнете върху началната точка на отсечката"
+
+#: graphicswin.cpp:1365
+msgid "click first point of construction line segment"
+msgstr "щракнете върху началната точка на конструктивната отсечка"
+
+#: graphicswin.cpp:1366
+msgid "click first point of cubic segment"
+msgstr "щракнете върху началната точка на кубичната крива"
+
+#: graphicswin.cpp:1367
+msgid "click center of circle"
+msgstr "щракнете върху центъра на окръжността"
+
+#: graphicswin.cpp:1368
+msgid "click origin of workplane"
+msgstr "щракнете върху началото на координатната система на работната равнина"
+
+#: graphicswin.cpp:1369
+msgid "click one corner of rectangle"
+msgstr "щракнете върху единия ъгъл на правоъгълника"
+
+#: graphicswin.cpp:1370
+msgid "click top left of text"
+msgstr "щракнете в горния ляв ъгъл на текста"
+
+#: graphicswin.cpp:1376
+msgid "click top left of image"
+msgstr "щракнете в горния ляв ъгъл на изображението"
+
+#: graphicswin.cpp:1402
+msgid "No entities are selected. Select entities before trying to toggle their construction state."
+msgstr ""
+"Няма избрани елементи. Изберете елементи, преди да променяте конструктивното"
+" им състояние."
+
+#: group.cpp:86
+msgctxt "group-name"
+msgid "sketch-in-3d"
+msgstr "скица-в-3D"
+
+#: group.cpp:154
+msgid ""
+"Bad selection for new sketch in workplane. This group can be created with:\n"
+"\n"
+"    * a point (through the point, orthogonal to coordinate axes)\n"
+"    * a point and two line segments (through the point, parallel to the lines)\n"
+"    * a point and a normal (through the point, orthogonal to the normal)\n"
+"    * a workplane (copy of the workplane)\n"
+msgstr ""
+"Невалиден избор за нова скица в работна равнина. Тази група може да се създаде с:\n"
+"\n"
+"    * точка (през точката, перпендикулярно на координатните оси)\n"
+"    * точка и две отсечки (през точката, успоредно на отсечките)\n"
+"    * точка и нормала (през точката, перпендикулярно на нормалата)\n"
+"    * работна равнина (копие на работната равнина)\n"
+
+#: group.cpp:170
+msgid ""
+"Activate a workplane (Sketch -> In Workplane) before extruding. The sketch will be extruded "
+"normal to the workplane."
+msgstr ""
+"Преди изтегляне активирайте работна равнина (Скица -> В работна равнина). "
+"Скицата ще бъде изтеглена перпендикулярно на работната равнина."
+
+#: group.cpp:179
+msgctxt "group-name"
+msgid "extrude"
+msgstr "изтегляне"
+
+#: group.cpp:184
+msgid "Lathe operation can only be applied to planar sketches."
+msgstr "Пълното завъртане може да се прилага само към равнинни скици."
+
+#: group.cpp:195
+msgid ""
+"Bad selection for new lathe group. This group can be created with:\n"
+"\n"
+"    * a point and a line segment or normal (revolved about an axis parallel to line / normal, "
+"through point)\n"
+"    * a line segment (revolved about line segment)\n"
+msgstr ""
+"Невалиден избор за нова група с пълно завъртане. Тя може да се създаде с:\n"
+"\n"
+"    * точка и отсечка или нормала "
+"(завъртане около ос през точката, успоредна на отсечката / нормалата)\n"
+"    * отсечка (завъртане около отсечката)\n"
+
+#: group.cpp:205
+msgctxt "group-name"
+msgid "lathe"
+msgstr "пълно-завъртане"
+
+#: group.cpp:210
+msgid "Revolve operation can only be applied to planar sketches."
+msgstr "Завъртането на ъгъл може да се прилага само към равнинни скици."
+
+#: group.cpp:221
+msgid ""
+"Bad selection for new revolve group. This group can be created with:\n"
+"\n"
+"    * a point and a line segment or normal (revolved about an axis parallel to line / normal, "
+"through point)\n"
+"    * a line segment (revolved about line segment)\n"
+msgstr ""
+"Невалиден избор за нова група със завъртане на ъгъл. Тя може да се създаде с:\n"
+"\n"
+"    * точка и отсечка или нормала "
+"(завъртане около ос през точката, успоредна на отсечката / нормалата)\n"
+"    * отсечка (завъртане около отсечката)\n"
+
+#: group.cpp:233
+msgctxt "group-name"
+msgid "revolve"
+msgstr "завъртане-на-ъгъл"
+
+#: group.cpp:238
+msgid "Helix operation can only be applied to planar sketches."
+msgstr "Винтовото изтегляне може да се прилага само към равнинни скици."
+
+#: group.cpp:249
+msgid ""
+"Bad selection for new helix group. This group can be created with:\n"
+"\n"
+"    * a point and a line segment or normal (revolved about an axis parallel to line / normal, "
+"through point)\n"
+"    * a line segment (revolved about line segment)\n"
+msgstr ""
+"Невалиден избор за нова група с винтово изтегляне. Тя може да се създаде с:\n"
+"\n"
+"    * точка и отсечка или нормала "
+"(завъртане около ос през точката, успоредна на отсечката / нормалата)\n"
+"    * отсечка (завъртане около отсечката)\n"
+
+#: group.cpp:261
+msgctxt "group-name"
+msgid "helix"
+msgstr "винтово-изтегляне"
+
+#: group.cpp:274
+msgid ""
+"Bad selection for new rotation. This group can be created with:\n"
+"\n"
+"    * a point, while locked in workplane (rotate in plane, about that point)\n"
+"    * a point and a line or a normal (rotate about an axis through the point, and parallel to "
+"line / normal)\n"
+msgstr ""
+"Невалиден избор за ново кръгово размножаване. Тази група може да се създаде с:\n"
+"\n"
+"    * точка при активна работна равнина (завъртане в равнината около точката)\n"
+"    * точка и права или нормала "
+"(завъртане около ос през точката, успоредна на правата / нормалата)\n"
+
+#: group.cpp:287
+msgctxt "group-name"
+msgid "rotate"
+msgstr "кръгово-размножаване"
+
+#: group.cpp:298
+msgctxt "group-name"
+msgid "translate"
+msgstr "линейно-размножаване"
+
+#: group.cpp:422
+msgid "(unnamed)"
+msgstr "(без име)"
+
+#: groupmesh.cpp:710
+msgid "not closed contour, or not all same style!"
+msgstr "контурът не е затворен или стиловете на елементите не са еднакви!"
+
+#: groupmesh.cpp:723
+msgid "points not all coplanar!"
+msgstr "точките не лежат в една равнина!"
+
+#: groupmesh.cpp:725
+msgid "contour is self-intersecting!"
+msgstr "контурът се самопресича!"
+
+#: groupmesh.cpp:727
+msgid "zero-length edge!"
+msgstr "ръб с нулева дължина!"
+
+#: importmesh.cpp:136
+msgid "Text-formated STL files are not currently supported"
+msgstr "STL файлове в текстов формат в момента не се поддържат"
+
+#: modify.cpp:252
+msgid "Must be sketching in workplane to create tangent arc."
+msgstr "За да създадете допирателна дъга, трябва да чертаете в работна равнина."
+
+#: modify.cpp:299
+msgid ""
+"To create a tangent arc, select a point where two non-construction lines or circles in this group "
+"and workplane join."
+msgstr ""
+"За да създадете допирателна дъга, изберете общата точка на две отсечки или окръжности "
+"от тази група и работна равнина. Елементите не трябва да са конструктивни."
+
+#: modify.cpp:386
+msgid ""
+"Couldn't round this corner. Try a smaller radius, or try creating the desired geometry by hand "
+"with tangency constraints."
+msgstr ""
+"Не може да се закръгли този ъгъл. Опитайте с по-малък радиус "
+"или създайте желаната геометрия ръчно с ограничения за допирателност."
+
+#: modify.cpp:595
+msgid "Couldn't split this entity; lines, circles, or cubics only."
+msgstr ""
+"Елементът не може да бъде разделен; "
+"поддържат се само отсечки, окръжности и кубични криви."
+
+#: modify.cpp:622
+msgid "Must be sketching in workplane to split."
+msgstr "За да разделяте елементи, трябва да чертаете в работна равнина."
+
+#: modify.cpp:629
+msgid ""
+"Select two entities that intersect each other (e.g. two lines/circles/arcs or a line/circle/arc "
+"and a point)."
+msgstr ""
+"Изберете два пресичащи се елемента "
+"(напр. две отсечки / окръжности / дъги или отсечка / окръжност / дъга и точка)."
+
+#: modify.cpp:734
+msgid "Can't split; no intersection found."
+msgstr "Разделянето е невъзможно; не е намерена пресечна точка."
+
+#: mouse.cpp:558
+msgid "Assign to Style"
+msgstr "Задаване на стил"
+
+#: mouse.cpp:574
+msgid "No Style"
+msgstr "Без стил"
+
+#: mouse.cpp:577
+msgid "Newly Created Custom Style..."
+msgstr "Нов потребителски стил..."
+
+#: mouse.cpp:584
+msgid "Group Info"
+msgstr "Информация за групата"
+
+#: mouse.cpp:604
+msgid "Style Info"
+msgstr "Информация за стила"
+
+#: mouse.cpp:624
+msgid "Select Edge Chain"
+msgstr "Избиране на верига от ръбове"
+
+#: mouse.cpp:630
+msgid "Toggle Reference Dimension"
+msgstr "Превключване на референтен размер"
+
+#: mouse.cpp:636
+msgid "Other Supplementary Angle"
+msgstr "Другият допълнителен ъгъл"
+
+#: mouse.cpp:641
+msgid "Snap to Grid"
+msgstr "Прилепване към мрежата"
+
+#: mouse.cpp:650
+msgid "Remove Spline Point"
+msgstr "Премахване на точка от сплайн-крива"
+
+#: mouse.cpp:685
+msgid "Add Spline Point"
+msgstr "Добавяне на точка към сплайн-крива"
+
+#: mouse.cpp:689
+msgid "Cannot add spline point: maximum number of points reached."
+msgstr "Не може да се добави точка към сплайн-кривата: достигнат е максималният брой точки."
+
+#: mouse.cpp:714
+msgid "Toggle Construction"
+msgstr "Превключване на конструктивна геометрия"
+
+#: mouse.cpp:730
+msgid "Delete Point-Coincident Constraint"
+msgstr "Изтриване на ограничението за съвпадение на точки"
+
+#: mouse.cpp:748
+msgid "Cut"
+msgstr "Изрязване"
+
+#: mouse.cpp:750
+msgid "Copy"
+msgstr "Копиране"
+
+#: mouse.cpp:754
+msgid "Select All"
+msgstr "Избиране на всичко"
+
+#: mouse.cpp:759
+msgid "Paste"
+msgstr "Поставяне"
+
+#: mouse.cpp:761
+msgid "Paste Transformed..."
+msgstr "Поставяне с трансформация..."
+
+#: mouse.cpp:766
+msgid "Delete"
+msgstr "Изтриване"
+
+#: mouse.cpp:769
+msgid "Unselect All"
+msgstr "Премахване на избора"
+
+#: mouse.cpp:776
+msgid "Unselect Hovered"
+msgstr "Премахване на избора на посочения елемент"
+
+#: mouse.cpp:785
+msgid "Zoom to Fit"
+msgstr "Побиране на изгледа"
+
+#: mouse.cpp:987 mouse.cpp:1276
+msgid "click next point of line, or press Esc"
+msgstr "щракнете върху следващата точка на отсечката или натиснете Esc"
+
+#: mouse.cpp:993
+msgid "Can't draw rectangle in 3d; first, activate a workplane with Sketch -> In Workplane."
+msgstr ""
+"Не може да чертаете правоъгълник в 3D; "
+"първо активирайте работна равнина чрез Скица -> В работна равнина."
+
+#: mouse.cpp:1027
+msgid "click to place other corner of rectangle"
+msgstr "щракнете, за да поставите другия ъгъл на правоъгълника"
+
+#: mouse.cpp:1048
+msgid "click to set radius"
+msgstr "щракнете, за да зададете радиуса"
+
+#: mouse.cpp:1053
+msgid "Can't draw arc in 3d; first, activate a workplane with Sketch -> In Workplane."
+msgstr ""
+"Не може да чертаете дъга в 3D; "
+"първо активирайте работна равнина чрез Скица -> В работна равнина."
+
+#: mouse.cpp:1072
+msgid "click to place point"
+msgstr "щракнете, за да поставите точка"
+
+#: mouse.cpp:1088
+msgid "click next point of cubic, or press Esc"
+msgstr "щракнете върху следващата точка на кубичната крива или натиснете Esc"
+
+#: mouse.cpp:1093
+msgid "Sketching in a workplane already; sketch in 3d before creating new workplane."
+msgstr ""
+"Вече чертаете в работна равнина; преминете към чертане в 3D, "
+"преди да създадете нова работна равнина."
+
+#: mouse.cpp:1109
+msgid "Can't draw text in 3d; first, activate a workplane with Sketch -> In Workplane."
+msgstr ""
+"Не може да чертаете текст в 3D; "
+"първо активирайте работна равнина чрез Скица -> В работна равнина."
+
+#: mouse.cpp:1126
+msgid "click to place bottom right of text"
+msgstr "щракнете, за да поставите долния десен ъгъл на текста"
+
+#: mouse.cpp:1132
+msgid "Can't draw image in 3d; first, activate a workplane with Sketch -> In Workplane."
+msgstr ""
+"Не може да чертаете изображение в 3D; "
+"първо активирайте работна равнина чрез Скица -> В работна равнина."
+
+#: platform/gui.cpp:85 platform/gui.cpp:90 solvespace.cpp:583
+msgctxt "file-type"
+msgid "SolveSpace models"
+msgstr "Модели SolveSpace"
+
+#: platform/gui.cpp:89
+msgctxt "file-type"
+msgid "ALL"
+msgstr "ВСИЧКИ"
+
+#: platform/gui.cpp:91
+msgctxt "file-type"
+msgid "IDF circuit board"
+msgstr "Печатна платка IDF"
+
+#: platform/gui.cpp:92
+msgctxt "file-type"
+msgid "STL triangle mesh"
+msgstr "Триъгълна STL мрежа"
+
+#: platform/gui.cpp:96
+msgctxt "file-type"
+msgid "PNG image"
+msgstr "Изображение PNG"
+
+#: platform/gui.cpp:100
+msgctxt "file-type"
+msgid "STL mesh"
+msgstr "STL мрежа"
+
+#: platform/gui.cpp:101
+msgctxt "file-type"
+msgid "Wavefront OBJ mesh"
+msgstr "Мрежа Wavefront OBJ"
+
+#: platform/gui.cpp:102
+msgctxt "file-type"
+msgid "Three.js-compatible mesh, with viewer"
+msgstr "Мрежа, съвместима с Three.js, с визуализатор"
+
+#: platform/gui.cpp:103
+msgctxt "file-type"
+msgid "Three.js-compatible mesh, mesh only"
+msgstr "Мрежа, съвместима с Three.js, само мрежа"
+
+#: platform/gui.cpp:104
+msgctxt "file-type"
+msgid "VRML text file"
+msgstr "Текстов файл VRML"
+
+#: platform/gui.cpp:108 platform/gui.cpp:115 platform/gui.cpp:122
+msgctxt "file-type"
+msgid "STEP file"
+msgstr "Файл STEP"
+
+#: platform/gui.cpp:112
+msgctxt "file-type"
+msgid "PDF file"
+msgstr "Файл PDF"
+
+#: platform/gui.cpp:113
+msgctxt "file-type"
+msgid "Encapsulated PostScript"
+msgstr "Капсулиран PostScript"
+
+#: platform/gui.cpp:114
+msgctxt "file-type"
+msgid "Scalable Vector Graphics"
+msgstr "Мащабируема векторна графика"
+
+#: platform/gui.cpp:116 platform/gui.cpp:123
+msgctxt "file-type"
+msgid "DXF file (AutoCAD 2007)"
+msgstr "Файл DXF (AutoCAD 2007)"
+
+#: platform/gui.cpp:117
+msgctxt "file-type"
+msgid "HPGL file"
+msgstr "Файл HPGL"
+
+#: platform/gui.cpp:118
+msgctxt "file-type"
+msgid "G Code"
+msgstr "G-код"
+
+#: platform/gui.cpp:127
+msgctxt "file-type"
+msgid "AutoCAD DXF and DWG files"
+msgstr "Файлове AutoCAD DXF и DWG"
+
+#: platform/gui.cpp:131
+msgctxt "file-type"
+msgid "Comma-separated values"
+msgstr "Стойности, разделени със запетаи"
+
+#: platform/guigtk.cpp:1434 platform/guimac.mm:1513 platform/guiwin.cpp:1641
+msgid "untitled"
+msgstr "без име"
+
+#: platform/guigtk.cpp:1445 platform/guigtk.cpp:1481 platform/guimac.mm:1471
+#: platform/guiwin.cpp:1639
+msgctxt "title"
+msgid "Save File"
+msgstr "Запис на файл"
+
+#: platform/guigtk.cpp:1446 platform/guigtk.cpp:1482 platform/guimac.mm:1454
+#: platform/guiwin.cpp:1645
+msgctxt "title"
+msgid "Open File"
+msgstr "Отваряне на файл"
+
+#: platform/guigtk.cpp:1449 platform/guigtk.cpp:1488
+msgctxt "button"
+msgid "_Cancel"
+msgstr "От_каз"
+
+#: platform/guigtk.cpp:1450 platform/guigtk.cpp:1486
+msgctxt "button"
+msgid "_Save"
+msgstr "_Запис"
+
+#: platform/guigtk.cpp:1451 platform/guigtk.cpp:1487
+msgctxt "button"
+msgid "_Open"
+msgstr "_Отваряне"
+
+#: solvespace.cpp:175
+msgctxt "title"
+msgid "Autosave Available"
+msgstr "Наличен е автоматично записан файл"
+
+#: solvespace.cpp:176
+msgctxt "dialog"
+msgid "An autosave file is available for this sketch."
+msgstr "За тази скица има автоматично записан файл."
+
+#: solvespace.cpp:177
+msgctxt "dialog"
+msgid "Do you want to load the autosave file instead?"
+msgstr "Искате ли вместо това да заредите автоматично записания файл?"
+
+#: solvespace.cpp:178
+msgctxt "button"
+msgid "&Load autosave"
+msgstr "&Зареждане на автоматично записания файл"
+
+#: solvespace.cpp:180
+msgctxt "button"
+msgid "Do&n't Load"
+msgstr "&Без зареждане"
+
+#: solvespace.cpp:640
+msgctxt "title"
+msgid "Modified File"
+msgstr "Променен файл"
+
+#: solvespace.cpp:642
+#, c-format
+msgctxt "dialog"
+msgid "Do you want to save the changes you made to the sketch “%s”?"
+msgstr "Искате ли да запишете промените в скицата „%s“?"
+
+#: solvespace.cpp:645
+msgctxt "dialog"
+msgid "Do you want to save the changes you made to the new sketch?"
+msgstr "Искате ли да запишете промените в новата скица?"
+
+#: solvespace.cpp:648
+msgctxt "dialog"
+msgid "Your changes will be lost if you don't save them."
+msgstr "Промените ще бъдат загубени, ако не ги запишете."
+
+#: solvespace.cpp:649
+msgctxt "button"
+msgid "&Save"
+msgstr "&Запис"
+
+#: solvespace.cpp:651
+msgctxt "button"
+msgid "Do&n't Save"
+msgstr "&Без запис"
+
+#: solvespace.cpp:672
+msgctxt "title"
+msgid "(new sketch)"
+msgstr "(нова скица)"
+
+#: solvespace.cpp:683
+msgctxt "title"
+msgid "Property Browser"
+msgstr "Панел със свойства"
+
+#: solvespace.cpp:746
+msgid ""
+"Constraints are currently shown, and will be exported in the toolpath. This is probably not what "
+"you want; hide them by clicking the link at the top of the text window."
+msgstr ""
+"В момента ограниченията са показани и ще бъдат включени в траекторията на инструмента. "
+"Вероятно това не е желаното поведение; "
+"скрийте ги чрез връзката в горната част на текстовия прозорец."
+
+#: solvespace.cpp:834
+#, c-format
+msgid "Can't identify file type from file extension of filename '%s'; try .dxf or .dwg."
+msgstr "Не може да се определи типът на файла по разширението на „%s“; опитайте .dxf или .dwg."
+
+#: solvespace.cpp:886
+msgid "Constraint must have a label, and must not be a reference dimension."
+msgstr "Ограничението трябва да има надпис и не трябва да е референтен размер."
+
+#: solvespace.cpp:890
+msgid "Bad selection for step dimension; select a constraint."
+msgstr "Невалиден избор за стъпкова промяна на размер; изберете ограничение."
+
+#: solvespace.cpp:914
+msgid "The assembly does not interfere, good."
+msgstr "Сглобената единица няма пресичащи се части — всичко е наред."
+
+#: solvespace.cpp:930
+#, c-format
+msgid ""
+"The volume of the solid model is:\n"
+"\n"
+"    %s"
+msgstr ""
+"Обемът на твърдотелния модел е:\n"
+"\n"
+"    %s"
+
+#: solvespace.cpp:939
+#, c-format
+msgid ""
+"\n"
+"The volume of current group mesh is:\n"
+"\n"
+"    %s"
+msgstr ""
+"\n"
+"Обемът на мрежата на текущата група е:\n"
+"\n"
+"    %s"
+
+#: solvespace.cpp:944
+msgid ""
+"\n"
+"\n"
+"Curved surfaces have been approximated as triangles.\n"
+"This introduces error, typically of around 1%."
+msgstr ""
+"\n"
+"\n"
+"Извитите повърхнини са апроксимирани с триъгълници.\n"
+"Това внася грешка, обикновено около 1%."
+
+#: solvespace.cpp:959
+#, c-format
+msgid ""
+"The surface area of the selected faces is:\n"
+"\n"
+"    %s\n"
+"\n"
+"Curves have been approximated as piecewise linear.\n"
+"This introduces error, typically of around 1%%."
+msgstr ""
+"Площта на избраните стени е:\n"
+"\n"
+"    %s\n"
+"\n"
+"Кривите са апроксимирани с последователност от отсечки.\n"
+"Това внася грешка, обикновено около 1%%."
+
+#: solvespace.cpp:968
+msgid ""
+"This group does not contain a correctly-formed 2d closed area. It is open, not coplanar, or self-"
+"intersecting."
+msgstr ""
+"Тази група не съдържа правилно оформена затворена 2D област. "
+"Контурът е отворен, не лежи в една равнина или се самопресича."
+
+#: solvespace.cpp:980
+#, c-format
+msgid ""
+"The area of the region sketched in this group is:\n"
+"\n"
+"    %s\n"
+"\n"
+"Curves have been approximated as piecewise linear.\n"
+"This introduces error, typically of around 1%%."
+msgstr ""
+"Площта на областта, начертана в тази група, е:\n"
+"\n"
+"    %s\n"
+"\n"
+"Кривите са апроксимирани с последователност от отсечки.\n"
+"Това внася грешка, обикновено около 1%%."
+
+#: solvespace.cpp:1000
+#, c-format
+msgid ""
+"The total length of the selected entities is:\n"
+"\n"
+"    %s\n"
+"\n"
+"Curves have been approximated as piecewise linear.\n"
+"This introduces error, typically of around 1%%."
+msgstr ""
+"Общата дължина на избраните елементи е:\n"
+"\n"
+"    %s\n"
+"\n"
+"Кривите са апроксимирани с последователност от отсечки.\n"
+"Това внася грешка, обикновено около 1%%."
+
+#: solvespace.cpp:1006
+msgid "Bad selection for perimeter; select line segments, arcs, and curves."
+msgstr "Невалиден избор за измерване на периметър; изберете отсечки, дъги и криви."
+
+#: solvespace.cpp:1022
+msgid "Bad selection for trace; select a single point."
+msgstr "Невалиден избор за проследяване; изберете една точка."
+
+#: solvespace.cpp:1049
+#, c-format
+msgid "Couldn't write to '%s'"
+msgstr "Не може да се запише във файла „%s“"
+
+#: solvespace.cpp:1079
+msgid "The mesh is self-intersecting (NOT okay, invalid)."
+msgstr "Мрежата се самопресича (невалидна е)."
+
+#: solvespace.cpp:1080
+msgid "The mesh is not self-intersecting (okay, valid)."
+msgstr "Мрежата не се самопресича (валидна е)."
+
+#: solvespace.cpp:1082
+msgid "The mesh has naked edges (NOT okay, invalid)."
+msgstr "Мрежата има свободни ръбове (невалидна е)."
+
+#: solvespace.cpp:1083
+msgid "The mesh is watertight (okay, valid)."
+msgstr "Мрежата е затворена (валидна е)."
+
+#: solvespace.cpp:1086
+#, c-format
+msgid ""
+"\n"
+"\n"
+"The model contains %d triangles, from %d surfaces."
+msgstr ""
+"\n"
+"\n"
+"Моделът съдържа %d триъгълника от %d повърхнини."
+
+#: solvespace.cpp:1090
+#, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s\n"
+"\n"
+"Zero problematic edges, good.%s"
+msgstr ""
+"%s\n"
+"\n"
+"%s\n"
+"\n"
+"Няма проблемни ръбове — всичко е наред.%s"
+
+#: solvespace.cpp:1093
+#, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s\n"
+"\n"
+"%d problematic edges, bad.%s"
+msgstr ""
+"%s\n"
+"\n"
+"%s\n"
+"\n"
+"%d проблемни ръба — има проблем.%s"
+
+#: solvespace.cpp:1106
+#, c-format
+msgid ""
+"This is SolveSpace version %s.\n"
+"\n"
+"For more information, see http://solvespace.com/\n"
+"\n"
+"SolveSpace is free software: you are free to modify\n"
+"and/or redistribute it under the terms of the GNU\n"
+"General Public License (GPL) version 3 or later.\n"
+"\n"
+"There is NO WARRANTY, to the extent permitted by\n"
+"law. For details, visit http://gnu.org/licenses/\n"
+"\n"
+"© 2008-%d Jonathan Westhues and other authors.\n"
+msgstr ""
+"Това е SolveSpace, версия %s.\n"
+"\n"
+"За повече информация посетете http://solvespace.com/\n"
+"\n"
+"SolveSpace е свободен софтуер: имате право да го променяте\n"
+"и/или разпространявате съгласно условията на Общия публичен\n"
+"лиценз на GNU (GPL), версия 3 или по-нова.\n"
+"\n"
+"НЕ СЕ ПРЕДОСТАВЯ ГАРАНЦИЯ, доколкото законът позволява.\n"
+"За подробности посетете http://gnu.org/licenses/\n"
+"\n"
+"© 2008-%d Jonathan Westhues и други автори.\n"
+
+#: style.cpp:185
+msgid ""
+"Can't assign style to an entity that's derived from another entity; try assigning a style to this "
+"entity's parent."
+msgstr ""
+"Не може да зададете стил на елемент, получен от друг елемент; "
+"задайте стил на родителския елемент."
+
+#: style.cpp:735
+msgid "Style name cannot be empty"
+msgstr "Името на стила не може да бъде празно"
+
+#: textscreens.cpp:837
+msgid "Can't repeat fewer than 1 time."
+msgstr "Броят на повторенията не може да е по-малък от 1."
+
+#: textscreens.cpp:841
+msgid "Can't repeat more than 999 times."
+msgstr "Броят на повторенията не може да е по-голям от 999."
+
+#: textscreens.cpp:866
+msgid "Group name cannot be empty"
+msgstr "Името на групата не може да бъде празно"
+
+#: textscreens.cpp:918
+msgid "Opacity must be between zero and one."
+msgstr "Непрозрачността трябва да бъде между нула и едно."
+
+#: textscreens.cpp:953
+msgid "Radius cannot be zero or negative."
+msgstr "Радиусът трябва да е положителен."
+
+#: toolbar.cpp:18
+msgid "Sketch line segment"
+msgstr "Чертане на отсечка"
+
+#: toolbar.cpp:20
+msgid "Sketch rectangle"
+msgstr "Чертане на правоъгълник"
+
+#: toolbar.cpp:22
+msgid "Sketch circle"
+msgstr "Чертане на окръжност"
+
+#: toolbar.cpp:24
+msgid "Sketch arc of a circle"
+msgstr "Чертане на дъга от окръжност"
+
+#: toolbar.cpp:26
+msgid "Sketch curves from text in a TrueType font"
+msgstr "Чертане на криви от текст с шрифт TrueType"
+
+#: toolbar.cpp:28
+msgid "Sketch image from a file"
+msgstr "Чертане на изображение от файл"
+
+#: toolbar.cpp:30
+msgid "Create tangent arc at selected point"
+msgstr "Създаване на допирателна дъга в избраната точка"
+
+#: toolbar.cpp:32
+msgid "Sketch cubic Bezier spline"
+msgstr "Чертане на кубична сплайн-крива на Безие"
+
+#: toolbar.cpp:34
+msgid "Sketch datum point"
+msgstr "Чертане на опорна точка"
+
+#: toolbar.cpp:36
+msgid "Toggle construction"
+msgstr "Превключване на конструктивна геометрия"
+
+#: toolbar.cpp:38
+msgid "Split lines / curves where they intersect"
+msgstr "Разделяне на линии / криви в пресечните им точки"
+
+#: toolbar.cpp:42
+msgid "Constrain distance / diameter / length"
+msgstr "Задаване на разстояние / диаметър / дължина"
+
+#: toolbar.cpp:44
+msgid "Constrain angle"
+msgstr "Задаване на ъгъл"
+
+#: toolbar.cpp:46
+msgid "Constrain to be horizontal"
+msgstr "Задаване на хоризонталност"
+
+#: toolbar.cpp:48
+msgid "Constrain to be vertical"
+msgstr "Задаване на вертикалност"
+
+#: toolbar.cpp:50
+msgid "Constrain to be parallel or tangent"
+msgstr "Задаване на успоредност или допирателност"
+
+#: toolbar.cpp:52
+msgid "Constrain to be perpendicular"
+msgstr "Задаване на перпендикулярност"
+
+#: toolbar.cpp:54
+msgid "Constrain point on line / curve / plane / point"
+msgstr "Задаване на точка върху права / крива, в равнина или съвпадаща с друга точка"
+
+#: toolbar.cpp:56
+msgid "Constrain symmetric"
+msgstr "Задаване на симетрия"
+
+#: toolbar.cpp:58
+msgid "Constrain equal length / radius / angle"
+msgstr "Задаване на равни дължини / радиуси / ъгли"
+
+#: toolbar.cpp:60
+msgid "Constrain normals in same orientation"
+msgstr "Задаване на еднаква ориентация на нормалите"
+
+#: toolbar.cpp:62
+msgid "Other supplementary angle"
+msgstr "Другият допълнителен ъгъл"
+
+#: toolbar.cpp:64
+msgid "Toggle reference dimension"
+msgstr "Превключване на референтен размер"
+
+#: toolbar.cpp:68
+msgid "New group extruding active sketch"
+msgstr "Нова група с изтегляне на активната скица"
+
+#: toolbar.cpp:70
+msgid "New group rotating active sketch"
+msgstr "Нова група с пълно завъртане на активната скица (360°)"
+
+#: toolbar.cpp:72
+msgid "New group helix from active sketch"
+msgstr "Нова група с винтово изтегляне на активната скица"
+
+#: toolbar.cpp:74
+msgid "New group revolve active sketch"
+msgstr "Нова група със завъртане на активната скица на зададен ъгъл"
+
+#: toolbar.cpp:76
+msgid "New group step and repeat rotating"
+msgstr "Нова група с кръгово размножаване"
+
+#: toolbar.cpp:78
+msgid "New group step and repeat translating"
+msgstr "Нова група с линейно размножаване"
+
+#: toolbar.cpp:80
+msgid "New group in new workplane (thru given entities)"
+msgstr "Нова група в нова работна равнина (през зададените елементи)"
+
+#: toolbar.cpp:82
+msgid "New group in 3d"
+msgstr "Нова група в 3D"
+
+#: toolbar.cpp:84
+msgid "New group linking / assembling file"
+msgstr "Нова група за свързване / сглобяване на файл"
+
+#: toolbar.cpp:88
+msgid "Nearest isometric view"
+msgstr "Най-близък изометричен изглед"
+
+#: toolbar.cpp:90
+msgid "Align view to active workplane"
+msgstr "Подравняване на изгледа към активната работна равнина"
+
+#: util.cpp:165
+msgctxt "title"
+msgid "Error"
+msgstr "Грешка"
+
+#: util.cpp:165
+msgctxt "title"
+msgid "Message"
+msgstr "Съобщение"
+
+#: util.cpp:170
+msgctxt "button"
+msgid "&OK"
+msgstr "&ОК"
+
+#: view.cpp:127
+msgid "Scale cannot be zero or negative."
+msgstr "Мащабът не може да бъде нула или отрицателен."
+
+#: view.cpp:139 view.cpp:148
+msgid "Bad format: specify x, y, z"
+msgstr "Невалиден формат: задайте x, y, z"
